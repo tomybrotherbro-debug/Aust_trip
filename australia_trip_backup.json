@@ -1,0 +1,1024 @@
+{
+  "itinerary": [
+    {
+      "dayId": "day_1",
+      "day": 1,
+      "dateLabel": "Day 1",
+      "title": "Arrival & Iconic Harbourside",
+      "activities": [
+        {
+          "id": "1_1",
+          "place": "Circular Quay",
+          "activity": "Breakfast & Harbour Views",
+          "time": "1 hr",
+          "food": "Flat White Coffee",
+          "budget": "$15–25",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "1_2",
+          "place": "Sydney Opera House",
+          "activity": "Guided Tour",
+          "time": "1.5 hrs",
+          "food": "",
+          "budget": "$43",
+          "action": "Book Tickets",
+          "comments": "Check tour times online"
+        },
+        {
+          "id": "1_3",
+          "place": "Sydney Opera House",
+          "activity": "Forecourt & Photos",
+          "time": "0.5 hr",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "1_4",
+          "place": "Royal Botanic Garden Sydney",
+          "activity": "Garden Walk & Lookouts",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Walk to Mrs Macquaries Chair"
+        },
+        {
+          "id": "1_5",
+          "place": "Circular Quay",
+          "activity": "Lunch",
+          "time": "1 hr",
+          "food": "Fish & Chips",
+          "budget": "$20–35",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "1_6",
+          "place": "Museum of Contemporary Art Australia",
+          "activity": "Museum Visit",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "1_7",
+          "place": "Sydney CBD",
+          "activity": "Vivid Sydney (Seasonal)",
+          "time": "3 hrs",
+          "food": "Australian Steak",
+          "budget": "$0–40",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "11 hrs",
+      "totalBudget": "$78–143"
+    },
+    {
+      "dayId": "day_2",
+      "day": 2,
+      "dateLabel": "Day 2",
+      "title": "History & Harbour Cruising",
+      "activities": [
+        {
+          "id": "2_1",
+          "place": "The Rocks",
+          "activity": "Historic Walking Tour",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "2_2",
+          "place": "The Rocks",
+          "activity": "Markets & Exploration",
+          "time": "1 hr",
+          "food": "Meat Pie",
+          "budget": "$10–20",
+          "action": "",
+          "comments": "Weekends only for markets"
+        },
+        {
+          "id": "2_3",
+          "place": "The Rocks",
+          "activity": "Lunch",
+          "time": "1 hr",
+          "food": "Barramundi",
+          "budget": "$20–35",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "2_4",
+          "place": "Australian National Maritime Museum",
+          "activity": "Museum Visit",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "$35–45",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "2_5",
+          "place": "Darling Harbour",
+          "activity": "Waterfront Walk",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "2_6",
+          "place": "Sydney Harbour",
+          "activity": "Sunset Cruise",
+          "time": "1.5 hrs",
+          "food": "",
+          "budget": "$40–70",
+          "action": "Reserve Boat",
+          "comments": "Leaves near Aquarium"
+        },
+        {
+          "id": "2_7",
+          "place": "Darling Harbour",
+          "activity": "Fireworks (Selected Days)",
+          "time": "0.5 hr",
+          "food": "Lamington",
+          "budget": "$5–10",
+          "action": "",
+          "comments": "Usually Saturdays"
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "11 hrs",
+      "totalBudget": "$110–180"
+    },
+    {
+      "dayId": "day_3",
+      "day": 3,
+      "dateLabel": "Day 3",
+      "title": "Bondi & Coastal Beaches",
+      "activities": [
+        {
+          "id": "3_1",
+          "place": "Bondi Beach",
+          "activity": "Swimming & Beach Time",
+          "time": "2 hrs",
+          "food": "Acai Bowl",
+          "budget": "$15–20",
+          "action": "",
+          "comments": "Bring sunscreen"
+        },
+        {
+          "id": "3_2",
+          "place": "Bondi to Coogee Walk",
+          "activity": "Coastal Walk",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Wear good walking shoes"
+        },
+        {
+          "id": "3_3",
+          "place": "Coogee Beach",
+          "activity": "Lunch",
+          "time": "1 hr",
+          "food": "Fish Tacos",
+          "budget": "$20–30",
+          "action": "",
+          "comments": "Coogee Pavilion is great"
+        },
+        {
+          "id": "3_4",
+          "place": "Coogee Beach",
+          "activity": "Relaxation",
+          "time": "3 hrs",
+          "food": "Fresh Oysters",
+          "budget": "$20–40",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "9 hrs",
+      "totalBudget": "$55–90"
+    },
+    {
+      "dayId": "day_4",
+      "day": 4,
+      "dateLabel": "Day 4",
+      "title": "Blue Mountains Excursion",
+      "activities": [
+        {
+          "id": "4_1",
+          "place": "Blue Mountains",
+          "activity": "Travel from Sydney",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "Train Pass",
+          "comments": "Central Station to Katoomba"
+        },
+        {
+          "id": "4_2",
+          "place": "Three Sisters",
+          "activity": "Lookout & Photography",
+          "time": "1 hr",
+          "food": "",
+          "budget": "Included",
+          "action": "",
+          "comments": "Echo Point"
+        },
+        {
+          "id": "4_3",
+          "place": "Blue Mountains",
+          "activity": "Waterfall Tour",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "",
+          "comments": "Leura Cascades"
+        },
+        {
+          "id": "4_4",
+          "place": "Blue Mountains",
+          "activity": "Lunch",
+          "time": "1 hr",
+          "food": "Leura Bakery Pie",
+          "budget": "Included",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "4_5",
+          "place": "Scenic World",
+          "activity": "Railway & Cableway",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "Book Pass",
+          "comments": "Steepest railway in world"
+        },
+        {
+          "id": "4_6",
+          "place": "Blue Mountains",
+          "activity": "Bushwalks",
+          "time": "2 hrs",
+          "food": "Aussie Burger",
+          "budget": "$20–30",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "4_7",
+          "place": "Blue Mountains",
+          "activity": "Return Travel",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "12 hrs",
+      "totalBudget": "$20–30"
+    },
+    {
+      "dayId": "day_5",
+      "day": 5,
+      "dateLabel": "Day 5",
+      "title": "Wildlife & Waterfront",
+      "activities": [
+        {
+          "id": "5_1",
+          "place": "Taronga Ferry",
+          "activity": "Ferry Ride",
+          "time": "0.5 hr",
+          "food": "",
+          "budget": "Included",
+          "action": "",
+          "comments": "Departs Circular Quay"
+        },
+        {
+          "id": "5_2",
+          "place": "Taronga Zoo Sydney",
+          "activity": "Zoo Visit",
+          "time": "6 hrs",
+          "food": "",
+          "budget": "$50–70",
+          "action": "Buy Entry",
+          "comments": ""
+        },
+        {
+          "id": "5_3",
+          "place": "Taronga Ferry",
+          "activity": "Return Ferry",
+          "time": "0.5 hr",
+          "food": "",
+          "budget": "Included",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "5_4",
+          "place": "Darling Harbour",
+          "activity": "Evening Walk",
+          "time": "2 hrs",
+          "food": "Pavlova",
+          "budget": "$10–15",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "5_5",
+          "place": "Darling Harbour",
+          "activity": "Dinner",
+          "time": "2 hrs",
+          "food": "Kangaroo Steak",
+          "budget": "$30–50",
+          "action": "Reserve Table",
+          "comments": "Meat District Co."
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "11 hrs",
+      "totalBudget": "$90–135"
+    },
+    {
+      "dayId": "day_6",
+      "day": 6,
+      "dateLabel": "Day 6",
+      "title": "Marine Life & Seafood",
+      "activities": [
+        {
+          "id": "6_1",
+          "place": "Sydney Harbour",
+          "activity": "Whale Watching Cruise",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "$70–120",
+          "action": "Book Boat",
+          "comments": "Seasonal (May-Nov)"
+        },
+        {
+          "id": "6_2",
+          "place": "Sydney Fish Market",
+          "activity": "Seafood Lunch",
+          "time": "1.5 hrs",
+          "food": "Lobster, Prawns",
+          "budget": "$30–60",
+          "action": "",
+          "comments": "Get there early for best pick"
+        },
+        {
+          "id": "6_3",
+          "place": "Harbour Foreshore",
+          "activity": "Walking",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "6_4",
+          "place": "Darling Harbour",
+          "activity": "Relaxation",
+          "time": "2 hrs",
+          "food": "Oysters",
+          "budget": "$20–30",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "9.5 hrs",
+      "totalBudget": "$120–210"
+    },
+    {
+      "dayId": "day_7",
+      "day": 7,
+      "dateLabel": "Day 7",
+      "title": "Manly Beach Day",
+      "activities": [
+        {
+          "id": "7_1",
+          "place": "Manly Ferry",
+          "activity": "Ferry Ride (Round Trip)",
+          "time": "1 hr",
+          "food": "",
+          "budget": "$15–20",
+          "action": "",
+          "comments": "Tap on with credit card"
+        },
+        {
+          "id": "7_2",
+          "place": "Manly Beach",
+          "activity": "Beach Time",
+          "time": "2.5 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "7_3",
+          "place": "Shelly Beach",
+          "activity": "Coastal Walk & Snorkelling",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "$30–80",
+          "action": "",
+          "comments": "Wetsuit required in winter"
+        },
+        {
+          "id": "7_4",
+          "place": "Manly",
+          "activity": "Lunch",
+          "time": "1 hr",
+          "food": "Fish Burger",
+          "budget": "$20–30",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "7_5",
+          "place": "Manly Corso",
+          "activity": "Explore Area",
+          "time": "3 hrs",
+          "food": "Gelato",
+          "budget": "$10",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "9.5 hrs",
+      "totalBudget": "$75–140"
+    },
+    {
+      "dayId": "day_8",
+      "day": 8,
+      "dateLabel": "Day 8",
+      "title": "Watsons Bay & Lighthouses",
+      "activities": [
+        {
+          "id": "8_1",
+          "place": "Watsons Bay",
+          "activity": "Harbour Exploration",
+          "time": "2 hrs",
+          "food": "Fish & Chips",
+          "budget": "$20–30",
+          "action": "",
+          "comments": "Doyles on the Beach"
+        },
+        {
+          "id": "8_2",
+          "place": "South Head",
+          "activity": "Coastal Walk",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Gap Bluff"
+        },
+        {
+          "id": "8_3",
+          "place": "Hornby Lighthouse",
+          "activity": "Photography",
+          "time": "1 hr",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Iconic red and white stripes"
+        },
+        {
+          "id": "8_4",
+          "place": "Coastal Cliffs",
+          "activity": "Relaxation",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "7 hrs",
+      "totalBudget": "$20–30"
+    },
+    {
+      "dayId": "day_9",
+      "day": 9,
+      "dateLabel": "Day 9",
+      "title": "CBD Shopping & Culture",
+      "activities": [
+        {
+          "id": "9_1",
+          "place": "Queen Victoria Building",
+          "activity": "Shopping & Architecture",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "Variable",
+          "action": "",
+          "comments": "Look at the Royal Clock"
+        },
+        {
+          "id": "9_2",
+          "place": "Sydney CBD",
+          "activity": "Lunch",
+          "time": "1 hr",
+          "food": "Australian Chocolates",
+          "budget": "$20–30",
+          "action": "",
+          "comments": "Haighs Chocolates"
+        },
+        {
+          "id": "9_3",
+          "place": "Pitt Street Mall",
+          "activity": "Shopping",
+          "time": "4 hrs",
+          "food": "",
+          "budget": "Variable",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "9_4",
+          "place": "Sydney CBD",
+          "activity": "Theatre / Concert",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "$50–200",
+          "action": "Buy Tickets",
+          "comments": "State Theatre or Capitol"
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "11 hrs",
+      "totalBudget": "$70–230"
+    },
+    {
+      "dayId": "day_10",
+      "day": 10,
+      "dateLabel": "Day 10",
+      "title": "Bridge Climb & Barangaroo",
+      "activities": [
+        {
+          "id": "10_1",
+          "place": "Sydney Harbour Bridge",
+          "activity": "BridgeClimb",
+          "time": "4 hrs",
+          "food": "",
+          "budget": "$250–400",
+          "action": "Book Climb",
+          "comments": "Must book well in advance"
+        },
+        {
+          "id": "10_2",
+          "place": "The Rocks",
+          "activity": "Lunch",
+          "time": "1.5 hrs",
+          "food": "Wagyu Steak",
+          "budget": "$30–60",
+          "action": "",
+          "comments": "Celebrate the climb!"
+        },
+        {
+          "id": "10_3",
+          "place": "Observatory Hill",
+          "activity": "Relaxation & Views",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Great spot to rest legs"
+        },
+        {
+          "id": "10_4",
+          "place": "Barangaroo Reserve",
+          "activity": "Twilight Harbour Walk",
+          "time": "2.5 hrs",
+          "food": "Wine & Tapas",
+          "budget": "$20–40",
+          "action": "",
+          "comments": "Beautiful modern precinct"
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "10 hrs",
+      "totalBudget": "$300–500"
+    },
+    {
+      "dayId": "day_11",
+      "day": 11,
+      "dateLabel": "Day 11",
+      "title": "Cockatoo Island Heritage",
+      "activities": [
+        {
+          "id": "11_1",
+          "place": "Cockatoo Island",
+          "activity": "Ferry Transfer",
+          "time": "0.5 hr",
+          "food": "",
+          "budget": "$10",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "11_2",
+          "place": "Cockatoo Island",
+          "activity": "Heritage Tour",
+          "time": "3.5 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Old convict and naval shipyard"
+        },
+        {
+          "id": "11_3",
+          "place": "Cockatoo Island",
+          "activity": "Lunch",
+          "time": "1 hr",
+          "food": "Café Meals",
+          "budget": "$20–30",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "11_4",
+          "place": "Cockatoo Island",
+          "activity": "Exploration & Photography",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Industrial ruins are great for photos"
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "8 hrs",
+      "totalBudget": "$30–40"
+    },
+    {
+      "dayId": "day_12",
+      "day": 12,
+      "dateLabel": "Day 12",
+      "title": "Shark Island Picnic",
+      "activities": [
+        {
+          "id": "12_1",
+          "place": "Shark Island",
+          "activity": "Ferry Transfers",
+          "time": "1 hr",
+          "food": "",
+          "budget": "$10–15",
+          "action": "Book Ferry",
+          "comments": "Requires specific Captain Cook ferry"
+        },
+        {
+          "id": "12_2",
+          "place": "Shark Island",
+          "activity": "Picnic & Harbour Views",
+          "time": "4 hrs",
+          "food": "Picnic Lunch",
+          "budget": "$15–30",
+          "action": "Pack Food",
+          "comments": "No shops on island"
+        },
+        {
+          "id": "12_3",
+          "place": "Shark Island",
+          "activity": "Walking & Relaxation",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Explore the grottos"
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "7 hrs",
+      "totalBudget": "$25–45"
+    },
+    {
+      "dayId": "day_13",
+      "day": 13,
+      "dateLabel": "Day 13",
+      "title": "Hunter Valley Wine Region",
+      "activities": [
+        {
+          "id": "13_1",
+          "place": "Sydney to Hunter Valley",
+          "activity": "Travel",
+          "time": "2.5 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "Rent Car / Tour",
+          "comments": "Drive north"
+        },
+        {
+          "id": "13_2",
+          "place": "Hunter Valley",
+          "activity": "Wine Tasting & Vineyards",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "$40–80",
+          "action": "Book Tasting",
+          "comments": "Shiraz and Semillon"
+        },
+        {
+          "id": "13_3",
+          "place": "Hunter Valley",
+          "activity": "Lunch",
+          "time": "1.5 hrs",
+          "food": "Estate Lunch",
+          "budget": "$30–60",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "13_4",
+          "place": "Hunter Valley Gardens",
+          "activity": "Explore Gardens",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "$35",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "13_5",
+          "place": "Hunter Valley to Sydney",
+          "activity": "Return Travel",
+          "time": "2.5 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "11.5 hrs",
+      "totalBudget": "$105–175"
+    },
+    {
+      "dayId": "day_14",
+      "day": 14,
+      "dateLabel": "Day 14",
+      "title": "Skydiving Adventure",
+      "activities": [
+        {
+          "id": "14_1",
+          "place": "Wollongong Dropzone",
+          "activity": "Check-in & Briefing",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "Confirm Time",
+          "comments": "Skydive Sydney-Wollongong"
+        },
+        {
+          "id": "14_2",
+          "place": "Wollongong",
+          "activity": "Tandem Jump",
+          "time": "1 hr",
+          "food": "",
+          "budget": "$300–450",
+          "action": "",
+          "comments": "Beach landing!"
+        },
+        {
+          "id": "14_3",
+          "place": "Skydiving Centre",
+          "activity": "Photos & Videos",
+          "time": "1 hr",
+          "food": "",
+          "budget": "Optional",
+          "action": "",
+          "comments": ""
+        },
+        {
+          "id": "14_4",
+          "place": "Wollongong",
+          "activity": "Weather Buffer Time",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Included",
+          "action": "",
+          "comments": "Jumps delayed by wind"
+        },
+        {
+          "id": "14_5",
+          "place": "Return to Sydney",
+          "activity": "Travel",
+          "time": "2 hrs",
+          "food": "Beach Café",
+          "budget": "$20–30",
+          "action": "",
+          "comments": ""
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "8 hrs",
+      "totalBudget": "$320–480"
+    },
+    {
+      "dayId": "day_15",
+      "day": 15,
+      "dateLabel": "Day 15",
+      "title": "Farewell Sydney",
+      "activities": [
+        {
+          "id": "15_1",
+          "place": "Flexible Buffer",
+          "activity": "Missed Activities",
+          "time": "3 hrs",
+          "food": "Favourite Food",
+          "budget": "Variable",
+          "action": "",
+          "comments": "Catch up on anything missed"
+        },
+        {
+          "id": "15_2",
+          "place": "Sydney CBD",
+          "activity": "Souvenir Shopping",
+          "time": "2 hrs",
+          "food": "",
+          "budget": "Variable",
+          "action": "",
+          "comments": "Paddys Market"
+        },
+        {
+          "id": "15_3",
+          "place": "Beach or Harbour",
+          "activity": "Final Relaxation",
+          "time": "3 hrs",
+          "food": "",
+          "budget": "$20–50",
+          "action": "",
+          "comments": "Enjoy the final sunset"
+        }
+      ],
+      "city": "Sydney",
+      "totalTime": "8 hrs",
+      "totalBudget": "$20–50"
+    },
+    {
+      "dayId": "day_16",
+      "day": 16,
+      "dateLabel": "Day 16",
+      "city": "Melbourne",
+      "title": "Melbourne's Soul",
+      "activities": [
+        {
+          "id": "16_1",
+          "place": "Melbourne CBD",
+          "activity": "Slow Breakfast & Coffee",
+          "time": "2 hrs",
+          "food": "Flat White",
+          "budget": "$15–25",
+          "action": "",
+          "comments": "Start at a classic café. Bring a notebook. Settle into the pace."
+        },
+        {
+          "id": "16_2",
+          "place": "State Library Victoria",
+          "activity": "Domed Reading Room",
+          "time": "2.5 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Spend time reflecting beneath the iconic dome."
+        },
+        {
+          "id": "16_3",
+          "place": "Melbourne Laneways",
+          "activity": "Laneway Wandering (Degraves St, Centre Pl)",
+          "time": "1.5 hrs",
+          "food": "Laneway Lunch",
+          "budget": "$20–40",
+          "action": "",
+          "comments": "Discover details rather than rushing."
+        },
+        {
+          "id": "16_4",
+          "place": "Royal Botanic Gardens Victoria",
+          "activity": "Afternoon Walk",
+          "time": "3.5 hrs",
+          "food": "Coffee",
+          "budget": "Free",
+          "action": "",
+          "comments": "Notice old trees, birds, people. Doing nothing is meaningful."
+        },
+        {
+          "id": "16_5",
+          "place": "Yarra River",
+          "activity": "Sunset Walk",
+          "time": "1.5 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Watch the evening light reflecting on the water."
+        },
+        {
+          "id": "16_6",
+          "place": "Hidden Laneway Bar",
+          "activity": "Dinner & Drinks",
+          "time": "2 hrs",
+          "food": "Restaurant Meal",
+          "budget": "$40–80",
+          "action": "Find Bar",
+          "comments": "Melbourne reveals itself best after dark."
+        }
+      ],
+      "totalTime": "13 hrs",
+      "totalBudget": "$75–145"
+    },
+    {
+      "dayId": "day_17",
+      "day": 17,
+      "dateLabel": "Day 17",
+      "city": "Melbourne",
+      "title": "Art, Coastline & Reflection",
+      "activities": [
+        {
+          "id": "17_1",
+          "place": "Fitzroy / Carlton",
+          "activity": "Coffee & Journaling",
+          "time": "2 hrs",
+          "food": "Café Breakfast",
+          "budget": "$10–20",
+          "action": "",
+          "comments": "Find a quiet neighbourhood café to write or read."
+        },
+        {
+          "id": "17_2",
+          "place": "Hosier Lane",
+          "activity": "Street Art & Reflections",
+          "time": "1.5 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Cinematic atmosphere, especially after rain."
+        },
+        {
+          "id": "17_3",
+          "place": "Federation Square & NGV",
+          "activity": "Gallery Visit",
+          "time": "2.5 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Experience Melbourne's creative identity."
+        },
+        {
+          "id": "17_4",
+          "place": "Brighton Beach",
+          "activity": "Slow Shoreline Walk",
+          "time": "2.5 hrs",
+          "food": "",
+          "budget": "$10",
+          "action": "",
+          "comments": "Take the tram. Embrace the melancholic, windy atmosphere."
+        },
+        {
+          "id": "17_5",
+          "place": "Brighton Bathing Boxes",
+          "activity": "Sunset Viewing",
+          "time": "2.5 hrs",
+          "food": "",
+          "budget": "Free",
+          "action": "",
+          "comments": "Iconic colorful boxes and changing sea light."
+        },
+        {
+          "id": "17_6",
+          "place": "Melbourne CBD",
+          "activity": "Final Evening Walk",
+          "time": "2 hrs",
+          "food": "Late Dinner",
+          "budget": "$20–40",
+          "action": "",
+          "comments": "Aimless walk. No destination. Just wander."
+        }
+      ],
+      "totalTime": "13 hrs",
+      "totalBudget": "$40–70"
+    }
+  ],
+  "completed": [],
+  "saved": [],
+  "notes": ""
+}
