@@ -130,7 +130,7 @@
                     <p class="text-sm text-gray-500 mt-1">Click any text in the table below to edit instantly.</p>
                 </div>
                 <div class="flex gap-2 flex-wrap">
-                    <button onclick="importFromDrive()" id="drive-sync-btn" class="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-3 py-2 rounded-md border border-blue-200 hover:bg-blue-100 transition-colors shadow-sm flex items-center"><i class="fa-brands fa-google-drive mr-1.5 text-sm"></i> Sync Drive</button>
+                    <button onclick="importFromGitHub()" id="github-sync-btn" class="text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-2 rounded-md border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm flex items-center"><i class="fa-brands fa-github mr-1.5 text-sm"></i> Sync GitHub</button>
                     <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
                     <button onclick="document.getElementById('import-file').click()" class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-2 rounded-md border border-indigo-200 hover:bg-indigo-100 transition-colors shadow-sm flex items-center"><i class="fa-solid fa-upload mr-1.5 text-sm"></i> Import</button>
                     <button onclick="exportData()" class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-2 rounded-md border border-emerald-200 hover:bg-emerald-100 transition-colors shadow-sm flex items-center"><i class="fa-solid fa-download mr-1.5 text-sm"></i> Backup</button>
@@ -147,30 +147,30 @@
         <div id="view-admin" class="view-section">
             <div class="mb-4">
                 <h2 class="text-2xl font-bold text-gray-800">Admin Tools <i class="fa-solid fa-wrench text-gray-500 ml-1 text-xl"></i></h2>
-                <p class="text-sm text-gray-500 mt-1">Test and debug your Google Drive data connections.</p>
+                <p class="text-sm text-gray-500 mt-1">Test and debug your data connections.</p>
             </div>
             
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
-                <h3 class="text-md font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">Google Drive Sync Tester</h3>
+                <h3 class="text-md font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">GitHub Sync Tester</h3>
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">Drive File Link or ID</label>
-                        <input type="text" id="admin-drive-url" placeholder="Paste full link or ID here..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all shadow-inner">
-                        <p class="text-[10px] text-gray-500 mt-1.5 italic"><i class="fa-solid fa-circle-info mr-1"></i>File must be set to "Anyone with the link can view".</p>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">GitHub File Link</label>
+                        <input type="text" id="admin-github-url" placeholder="Paste GitHub file link here..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all shadow-inner">
+                        <p class="text-[10px] text-gray-500 mt-1.5 italic"><i class="fa-solid fa-circle-info mr-1"></i>Paste the standard GitHub link or the raw.githubusercontent link.</p>
                     </div>
                     
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">CORS Proxy Service</label>
                         <select id="admin-proxy" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 transition-all shadow-inner cursor-pointer">
-                            <option value="allorigins">api.allorigins.win (Reliable / Default)</option>
-                            <option value="corsproxy">corsproxy.io (Fast)</option>
-                            <option value="none">No Proxy (Direct Fetch - Usually blocked by browser)</option>
+                            <option value="none">Direct Fetch (GitHub supports CORS - Default)</option>
+                            <option value="allorigins">api.allorigins.win (Fallback Proxy)</option>
+                            <option value="corsproxy">corsproxy.io (Fallback Proxy)</option>
                         </select>
                     </div>
 
                     <div class="flex gap-3 pt-3">
-                        <button onclick="testDriveFetch()" id="test-fetch-btn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm shadow-sm flex items-center justify-center"><i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Test Connection</button>
+                        <button onclick="testGitHubFetch()" id="test-fetch-btn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm shadow-sm flex items-center justify-center"><i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Test Connection</button>
                         <button onclick="applyTestData()" id="apply-test-btn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm shadow-sm hidden items-center justify-center"><i class="fa-solid fa-check-double mr-2"></i> Apply to App</button>
                     </div>
                 </div>
@@ -1026,83 +1026,83 @@
             reader.readAsText(file);
         }
 
-        async function importFromDrive() {
-            const btn = document.getElementById('drive-sync-btn');
+        async function importFromGitHub() {
+            const btn = document.getElementById('github-sync-btn');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Syncing...';
             
             try {
-                // Using allorigins as a reliable CORS proxy to wrap the raw drive file in JSON
-                const fileId = '16t3rk6KgycbxK_wLHQA3xgIvthb9PqVo';
-                const driveUrl = encodeURIComponent(`https://drive.google.com/uc?export=download&id=${fileId}`);
-                const proxyUrl = `https://api.allorigins.win/get?url=${driveUrl}&disableCache=${Date.now()}`;
+                // Direct fetch using GitHub's raw content domain (natively supports CORS!)
+                // Added a cache buster timestamp so you always pull the very latest commit from main branch
+                const fetchUrl = 'https://raw.githubusercontent.com/tomybrotherbro-debug/Aust_trip/main/australia_trip_backup.json?nocache=' + Date.now();
                 
-                const response = await fetch(proxyUrl);
+                const response = await fetch(fetchUrl);
+                if (!response.ok) throw new Error("Failed to fetch from GitHub: " + response.statusText);
+                
                 const data = await response.json();
                 
-                if (data.contents) {
-                    const imported = JSON.parse(data.contents);
-                    if (imported.itinerary) {
-                        itineraryData = imported.itinerary;
-                        if(imported.completed) completedActivities = imported.completed;
-                        if(imported.saved) savedActivities = imported.saved;
-                        if(imported.notes !== undefined) roughNotes = imported.notes;
-                        
-                        saveData();
-                        loadData();
-                        
-                        const indicator = document.getElementById('sync-status');
-                        indicator.innerHTML = '<i class="fa-brands fa-google-drive text-blue-500 mr-1.5"></i> Drive Synced';
-                        setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
-                    }
+                if (data.itinerary) {
+                    itineraryData = data.itinerary;
+                    if(data.completed) completedActivities = data.completed;
+                    if(data.saved) savedActivities = data.saved;
+                    if(data.notes !== undefined) roughNotes = data.notes;
+                    
+                    saveData();
+                    loadData();
+                    
+                    const indicator = document.getElementById('sync-status');
+                    indicator.innerHTML = '<i class="fa-brands fa-github text-slate-800 mr-1.5"></i> GitHub Synced';
+                    setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
                 } else {
-                    throw new Error("Empty contents");
+                    throw new Error("Invalid format: 'itinerary' key missing");
                 }
             } catch (e) {
                 console.error(e);
-                alert("Google Drive sync failed. Ensure the link is set to 'Anyone with the link can view'.");
+                alert("GitHub sync failed. Make sure the repository is public and the file exists.");
             } finally {
-                btn.innerHTML = '<i class="fa-brands fa-google-drive mr-1.5 text-sm"></i> Sync Drive';
+                btn.innerHTML = '<i class="fa-brands fa-github mr-1.5 text-sm"></i> Sync GitHub';
             }
         }
 
         // --- STREAMING_CHUNK:Admin Tester Logic ---
         let tempFetchedData = null;
 
-        function extractDriveId(input) {
-            // Regex to automatically extract the 25+ character ID from standard sharing links
-            const match = input.match(/[-\w]{25,}/);
-            return match ? match[0] : input;
+        function convertToRawGitHubUrl(url) {
+            // Automatically convert a standard GitHub file link to a raw download link
+            if (url.includes('github.com') && url.includes('/blob/')) {
+                return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+            }
+            return url;
         }
 
-        async function testDriveFetch() {
+        async function testGitHubFetch() {
             const btn = document.getElementById('test-fetch-btn');
             const consoleOut = document.getElementById('admin-console');
-            const inputVal = document.getElementById('admin-drive-url').value.trim();
+            const inputVal = document.getElementById('admin-github-url').value.trim();
             const proxy = document.getElementById('admin-proxy').value;
             const applyBtn = document.getElementById('apply-test-btn');
             
             if(!inputVal) {
-                consoleOut.innerText = "> ERROR: Please enter a Drive link or File ID.";
+                consoleOut.innerText = "> ERROR: Please enter a GitHub link.";
                 return;
             }
 
-            const fileId = extractDriveId(inputVal);
-            consoleOut.innerText = `> EXTRACTING ID: ${fileId}\n> PROXY SELECTED: ${proxy}\n> INITIATING FETCH...`;
+            const rawUrl = convertToRawGitHubUrl(inputVal);
+            consoleOut.innerText = `> PARSING URL...\n> RAW URL: ${rawUrl}\n> PROXY SELECTED: ${proxy}\n> INITIATING FETCH...`;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Fetching...';
             applyBtn.classList.add('hidden');
             applyBtn.classList.remove('flex');
             tempFetchedData = null;
 
             try {
-                const driveUrl = encodeURIComponent(`https://drive.google.com/uc?export=download&id=${fileId}`);
                 let fetchUrl = '';
                 
                 if (proxy === 'allorigins') {
-                    fetchUrl = `https://api.allorigins.win/get?url=${driveUrl}&disableCache=${Date.now()}`;
+                    fetchUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}&disableCache=${Date.now()}`;
                 } else if (proxy === 'corsproxy') {
-                    fetchUrl = `https://corsproxy.io/?https://drive.google.com/uc?export=download&id=${fileId}`;
+                    fetchUrl = `https://corsproxy.io/?${encodeURIComponent(rawUrl)}`;
                 } else {
-                    fetchUrl = `https://drive.google.com/uc?export=download&id=${fileId}`; 
+                    // Direct fetch
+                    fetchUrl = `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}nocache=${Date.now()}`; 
                 }
 
                 consoleOut.innerText += `\n> REQUESTING URL:\n${fetchUrl}\n> WAITING FOR RESPONSE...`;
@@ -1125,11 +1125,10 @@
                 try {
                     parsed = JSON.parse(rawDataStr);
                 } catch (parseError) {
-                    // Deep diagnostic check to tell the user exactly WHY it failed
                     if (rawDataStr.trim().startsWith('<')) {
-                        throw new Error("PERMISSION DENIED: Google Drive returned an HTML webpage instead of raw JSON data.\n\nFIX: Open your Google Drive file -> Click Share -> Change General Access to 'Anyone with the link'.");
+                        throw new Error("HTML RETURNED: GitHub returned an HTML webpage instead of raw JSON data. Ensure you are linking to the raw file or a public repository.");
                     } else {
-                        throw new Error("INVALID JSON FORMAT: The file was successfully downloaded, but the JSON syntax inside the file is broken.\n\nFIX: Ensure there are no missing commas, unescaped quotes, or missing brackets in your file.\nDetails: " + parseError.message);
+                        throw new Error("INVALID JSON FORMAT: The JSON syntax inside the file is broken.\nDetails: " + parseError.message);
                     }
                 }
                 
@@ -1143,7 +1142,7 @@
                 }
 
             } catch (e) {
-                consoleOut.innerHTML += `\n\n> <span class="text-rose-400">CRITICAL ERROR:</span>\n${e.message}\n\n> TROUBLESHOOTING:\n1. Ensure the Google Drive file is set to 'Anyone with the link can view'.\n2. The proxy might be blocking the request. Try switching the CORS Proxy Service above.`;
+                consoleOut.innerHTML += `\n\n> <span class="text-rose-400">CRITICAL ERROR:</span>\n${e.message}\n\n> TROUBLESHOOTING:\n1. Ensure the repository is Public.\n2. Ensure the URL points to a JSON file.`;
                 console.error(e);
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Test Connection';
@@ -1163,7 +1162,7 @@
             switchTab('overview');
             
             const indicator = document.getElementById('sync-status');
-            indicator.innerHTML = '<i class="fa-brands fa-google-drive text-blue-500 mr-1.5"></i> Test Data Applied';
+            indicator.innerHTML = '<i class="fa-brands fa-github text-slate-800 mr-1.5"></i> Test Data Applied';
             setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
         }
 
