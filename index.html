@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Australia Trip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .view-section { display: none; animation: fadeIn 0.3s ease-out forwards; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .nav-btn { position: relative; }
+        .nav-btn.active { color: #0284c7; }
+        
+        /* Edit Table Inputs */
+        .edit-input { width: 100%; background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 6px 8px; font-size: 13px; transition: all 0.2s; outline: none; }
+        .edit-input:hover { border-color: #e2e8f0; }
+        .edit-input:focus { background: white; border-color: #38bdf8; box-shadow: 0 0 0 2px #bae6fd; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-24 h-screen overflow-y-auto">
+
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-extrabold text-sky-800 tracking-tight"><i class="fa-solid fa-plane-departure mr-2"></i>Australia Trip</h1>
+            <div class="flex items-center gap-3">
+                <div id="sync-status" class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full flex items-center border border-gray-200 shadow-sm">
+                    <i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save
+                </div>
+                <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn text-gray-400 hover:text-slate-700 transition-colors" title="Admin Tools"><i class="fa-solid fa-gear"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        
+        <!-- View 1: Overview -->
+        <div id="view-overview" class="view-section active">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Trip Overview</h2>
+                <p class="text-sm text-gray-500 mt-1">Summary of your daily plans.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+                <div class="flex justify-between text-sm font-bold text-gray-700 mb-2">
+                    <span>Total Progress</span>
+                    <span id="total-progress-text" class="text-sky-600">0%</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="total-progress-bar" class="bg-sky-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="overview-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Overview Cards Rendered Here -->
+            </div>
+        </div>
+
+        <!-- View 2: Itinerary -->
+        <div id="view-itinerary" class="view-section">
+            <!-- Sticky Day Directory inside Itinerary -->
+            <div class="sticky top-[52px] z-30 bg-slate-50/95 backdrop-blur-md pt-2 pb-3 -mx-4 px-4 border-b border-gray-200 mb-4 shadow-sm">
+                <div id="day-directory" class="flex gap-2 overflow-x-auto custom-scrollbar pb-2 items-center">
+                    <!-- Day Buttons Rendered Here -->
+                </div>
+            </div>
+            
+            <div id="itinerary-container" class="space-y-4">
+                <!-- Itinerary Cards Rendered Here -->
+            </div>
+        </div>
+
+        <!-- View 3: Tasks (Action Req) -->
+        <div id="view-tasks" class="view-section">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Action Required <i class="fa-solid fa-triangle-exclamation text-amber-500 ml-1"></i></h2>
+                <p class="text-sm text-gray-500 mt-1">Activities that require booking, reservations, or follow-up.</p>
+            </div>
+            <div id="tasks-container" class="space-y-3">
+                <!-- Task Cards Rendered Here -->
+            </div>
+        </div>
+
+        <!-- View 4: Saved -->
+        <div id="view-saved" class="view-section">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Saved Favorites <i class="fa-solid fa-heart text-rose-500 ml-1"></i></h2>
+                <p class="text-sm text-gray-500 mt-1">Quick access to activities you've hearted.</p>
+            </div>
+            <div id="saved-container" class="space-y-3">
+                <!-- Saved Cards Rendered Here -->
+            </div>
+        </div>
+
+        <!-- View 5: Notes -->
+        <div id="view-notes" class="view-section">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Rough Notes <i class="fa-solid fa-pen-nib text-purple-500 ml-1"></i></h2>
+                <p class="text-sm text-gray-500 mt-1">Jot down packing lists, ideas, and confirmations.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col h-[65vh]">
+                <div class="bg-gray-50 border-b border-gray-200 p-2 flex gap-2 flex-wrap items-center">
+                    <button onclick="formatNote('bold')" class="p-2 hover:bg-gray-200 rounded text-gray-700 font-bold w-9 h-9 flex items-center justify-center transition-colors"><i class="fa-solid fa-bold"></i></button>
+                    <button onclick="formatNote('italic')" class="p-2 hover:bg-gray-200 rounded text-gray-700 italic w-9 h-9 flex items-center justify-center transition-colors"><i class="fa-solid fa-italic"></i></button>
+                    <button onclick="formatNote('underline')" class="p-2 hover:bg-gray-200 rounded text-gray-700 underline w-9 h-9 flex items-center justify-center transition-colors"><i class="fa-solid fa-underline"></i></button>
+                    <div class="w-px bg-gray-300 h-5 mx-1"></div>
+                    <button onclick="formatNote('insertUnorderedList')" class="p-2 hover:bg-gray-200 rounded text-gray-700 w-9 h-9 flex items-center justify-center transition-colors"><i class="fa-solid fa-list-ul"></i></button>
+                    <button onclick="formatNote('insertOrderedList')" class="p-2 hover:bg-gray-200 rounded text-gray-700 w-9 h-9 flex items-center justify-center transition-colors"><i class="fa-solid fa-list-ol"></i></button>
+                </div>
+                <div id="notes-editor" contenteditable="true" class="p-4 flex-1 overflow-y-auto outline-none text-gray-700 text-sm leading-relaxed" oninput="saveNotes()"></div>
+            </div>
+        </div>
+
+        <!-- View 6: Edit Data -->
+        <div id="view-edit" class="view-section">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Edit Itinerary ✏️</h2>
+                    <p class="text-sm text-gray-500 mt-1">Click any text in the table below to edit instantly.</p>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="importFromDrive()" id="drive-sync-btn" class="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-3 py-2 rounded-md border border-blue-200 hover:bg-blue-100 transition-colors shadow-sm flex items-center"><i class="fa-brands fa-google-drive mr-1.5 text-sm"></i> Sync Drive</button>
+                    <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
+                    <button onclick="document.getElementById('import-file').click()" class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-2 rounded-md border border-indigo-200 hover:bg-indigo-100 transition-colors shadow-sm flex items-center"><i class="fa-solid fa-upload mr-1.5 text-sm"></i> Import</button>
+                    <button onclick="exportData()" class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-2 rounded-md border border-emerald-200 hover:bg-emerald-100 transition-colors shadow-sm flex items-center"><i class="fa-solid fa-download mr-1.5 text-sm"></i> Backup</button>
+                    <button onclick="addNewDay()" class="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-3 py-2 rounded-md border border-purple-200 hover:bg-purple-100 transition-colors shadow-sm flex items-center"><i class="fa-solid fa-calendar-plus mr-1.5 text-sm"></i> Add Day</button>
+                </div>
+            </div>
+            
+            <div id="edit-container" class="space-y-8">
+                <!-- Edit Spreadsheet Rendered Here -->
+            </div>
+        </div>
+
+        <!-- View 7: Admin / Developer Tools -->
+        <div id="view-admin" class="view-section">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Admin Tools <i class="fa-solid fa-wrench text-gray-500 ml-1 text-xl"></i></h2>
+                <p class="text-sm text-gray-500 mt-1">Test and debug your Google Drive data connections.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
+                <h3 class="text-md font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">Google Drive Sync Tester</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">Drive File Link or ID</label>
+                        <input type="text" id="admin-drive-url" placeholder="Paste full link or ID here..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all shadow-inner">
+                        <p class="text-[10px] text-gray-500 mt-1.5 italic"><i class="fa-solid fa-circle-info mr-1"></i>File must be set to "Anyone with the link can view".</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">CORS Proxy Service</label>
+                        <select id="admin-proxy" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 transition-all shadow-inner cursor-pointer">
+                            <option value="allorigins">api.allorigins.win (Reliable / Default)</option>
+                            <option value="corsproxy">corsproxy.io (Fast)</option>
+                            <option value="none">No Proxy (Direct Fetch - Usually blocked by browser)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-3 pt-3">
+                        <button onclick="testDriveFetch()" id="test-fetch-btn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm shadow-sm flex items-center justify-center"><i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Test Connection</button>
+                        <button onclick="applyTestData()" id="apply-test-btn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm shadow-sm hidden items-center justify-center"><i class="fa-solid fa-check-double mr-2"></i> Apply to App</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0f172a] rounded-xl shadow-lg border border-slate-700 p-4 overflow-hidden flex flex-col">
+                <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-700/50">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-terminal mr-1.5"></i> Output Console</span>
+                    <button onclick="document.getElementById('admin-console').innerText = 'Awaiting execution...'" class="text-[10px] uppercase font-bold text-slate-500 hover:text-white transition-colors">Clear</button>
+                </div>
+                <pre id="admin-console" class="text-[11px] sm:text-xs text-green-400 font-mono whitespace-pre-wrap overflow-y-auto max-h-[50vh] custom-scrollbar pr-2 leading-relaxed">Awaiting execution...</pre>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 animate-[fadeIn_0.2s_ease-out]">
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Delete Activity?</h3>
+            <p class="text-sm text-gray-500 mb-6">Are you sure you want to delete this row? This action cannot be undone.</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button>
+                <button onclick="confirmDelete()" class="px-4 py-2 text-sm font-semibold text-white bg-rose-500 hover:bg-rose-600 rounded-lg shadow-sm transition-colors">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom App Navigation -->
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        <div class="max-w-7xl mx-auto flex justify-between px-1">
+            <button onclick="switchTab('overview')" id="nav-overview" class="nav-btn active text-sky-600 flex-1 py-3 text-center transition-colors">
+                <i class="fa-solid fa-compass text-xl mb-1 block"></i><span class="text-[10px] font-bold uppercase tracking-wider block">Overview</span>
+            </button>
+            <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn text-gray-400 flex-1 py-3 text-center transition-colors">
+                <i class="fa-solid fa-list-check text-xl mb-1 block"></i><span class="text-[10px] font-bold uppercase tracking-wider block">Itinerary</span>
+            </button>
+            <button onclick="switchTab('tasks')" id="nav-tasks" class="nav-btn text-gray-400 flex-1 py-3 text-center transition-colors">
+                <i class="fa-solid fa-clipboard-list text-xl mb-1 block"></i><span class="text-[10px] font-bold uppercase tracking-wider block">Tasks</span>
+            </button>
+            <button onclick="switchTab('saved')" id="nav-saved" class="nav-btn text-gray-400 flex-1 py-3 text-center transition-colors">
+                <i class="fa-solid fa-heart text-xl mb-1 block"></i><span class="text-[10px] font-bold uppercase tracking-wider block">Saved</span>
+            </button>
+            <button onclick="switchTab('notes')" id="nav-notes" class="nav-btn text-gray-400 flex-1 py-3 text-center transition-colors">
+                <i class="fa-solid fa-pen-nib text-xl mb-1 block"></i><span class="text-[10px] font-bold uppercase tracking-wider block">Notes</span>
+            </button>
+            <button onclick="switchTab('edit')" id="nav-edit" class="nav-btn text-gray-400 flex-1 py-3 text-center transition-colors">
+                <i class="fa-solid fa-pen-ruler text-xl mb-1 block"></i><span class="text-[10px] font-bold uppercase tracking-wider block">Edit</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // --- DEFAULT DATA (15 Days) ---
+        const defaultItinerary = [
+            { dayId: 'day_1', day: 1, dateLabel: 'Day 1', title: 'Arrival & Iconic Harbourside', activities: [
+                { id: '1_1', place: 'Circular Quay', activity: 'Breakfast & Harbour Views', time: '1 hr', food: 'Flat White Coffee', budget: '$15–25', action: '', comments: '' },
+                { id: '1_2', place: 'Sydney Opera House', activity: 'Guided Tour', time: '1.5 hrs', food: '', budget: '$43', action: 'Book Tickets', comments: 'Check tour times online' },
+                { id: '1_3', place: 'Sydney Opera House', activity: 'Forecourt & Photos', time: '0.5 hr', food: '', budget: 'Free', action: '', comments: '' },
+                { id: '1_4', place: 'Royal Botanic Garden Sydney', activity: 'Garden Walk & Lookouts', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Walk to Mrs Macquaries Chair' },
+                { id: '1_5', place: 'Circular Quay', activity: 'Lunch', time: '1 hr', food: 'Fish & Chips', budget: '$20–35', action: '', comments: '' },
+                { id: '1_6', place: 'Museum of Contemporary Art Australia', activity: 'Museum Visit', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' },
+                { id: '1_7', place: 'Sydney CBD', activity: 'Vivid Sydney (Seasonal)', time: '3 hrs', food: 'Australian Steak', budget: '$0–40', action: '', comments: '' }
+            ]},
+            { dayId: 'day_2', day: 2, dateLabel: 'Day 2', title: 'History & Harbour Cruising', activities: [
+                { id: '2_1', place: 'The Rocks', activity: 'Historic Walking Tour', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' },
+                { id: '2_2', place: 'The Rocks', activity: 'Markets & Exploration', time: '1 hr', food: 'Meat Pie', budget: '$10–20', action: '', comments: 'Weekends only for markets' },
+                { id: '2_3', place: 'The Rocks', activity: 'Lunch', time: '1 hr', food: 'Barramundi', budget: '$20–35', action: '', comments: '' },
+                { id: '2_4', place: 'Australian National Maritime Museum', activity: 'Museum Visit', time: '3 hrs', food: '', budget: '$35–45', action: '', comments: '' },
+                { id: '2_5', place: 'Darling Harbour', activity: 'Waterfront Walk', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' },
+                { id: '2_6', place: 'Sydney Harbour', activity: 'Sunset Cruise', time: '1.5 hrs', food: '', budget: '$40–70', action: 'Reserve Boat', comments: 'Leaves near Aquarium' },
+                { id: '2_7', place: 'Darling Harbour', activity: 'Fireworks (Selected Days)', time: '0.5 hr', food: 'Lamington', budget: '$5–10', action: '', comments: 'Usually Saturdays' }
+            ]},
+            { dayId: 'day_3', day: 3, dateLabel: 'Day 3', title: 'Bondi & Coastal Beaches', activities: [
+                { id: '3_1', place: 'Bondi Beach', activity: 'Swimming & Beach Time', time: '2 hrs', food: 'Acai Bowl', budget: '$15–20', action: '', comments: 'Bring sunscreen' },
+                { id: '3_2', place: 'Bondi to Coogee Walk', activity: 'Coastal Walk', time: '3 hrs', food: '', budget: 'Free', action: '', comments: 'Wear good walking shoes' },
+                { id: '3_3', place: 'Coogee Beach', activity: 'Lunch', time: '1 hr', food: 'Fish Tacos', budget: '$20–30', action: '', comments: 'Coogee Pavilion is great' },
+                { id: '3_4', place: 'Coogee Beach', activity: 'Relaxation', time: '3 hrs', food: 'Fresh Oysters', budget: '$20–40', action: '', comments: '' }
+            ]},
+            { dayId: 'day_4', day: 4, dateLabel: 'Day 4', title: 'Blue Mountains Excursion', activities: [
+                { id: '4_1', place: 'Blue Mountains', activity: 'Travel from Sydney', time: '2 hrs', food: '', budget: 'Included', action: 'Train Pass', comments: 'Central Station to Katoomba' },
+                { id: '4_2', place: 'Three Sisters', activity: 'Lookout & Photography', time: '1 hr', food: '', budget: 'Included', action: '', comments: 'Echo Point' },
+                { id: '4_3', place: 'Blue Mountains', activity: 'Waterfall Tour', time: '2 hrs', food: '', budget: 'Included', action: '', comments: 'Leura Cascades' },
+                { id: '4_4', place: 'Blue Mountains', activity: 'Lunch', time: '1 hr', food: 'Leura Bakery Pie', budget: 'Included', action: '', comments: '' },
+                { id: '4_5', place: 'Scenic World', activity: 'Railway & Cableway', time: '2 hrs', food: '', budget: 'Included', action: 'Book Pass', comments: 'Steepest railway in world' },
+                { id: '4_6', place: 'Blue Mountains', activity: 'Bushwalks', time: '2 hrs', food: 'Aussie Burger', budget: '$20–30', action: '', comments: '' },
+                { id: '4_7', place: 'Blue Mountains', activity: 'Return Travel', time: '2 hrs', food: '', budget: 'Included', action: '', comments: '' }
+            ]},
+            { dayId: 'day_5', day: 5, dateLabel: 'Day 5', title: 'Wildlife & Waterfront', activities: [
+                { id: '5_1', place: 'Taronga Ferry', activity: 'Ferry Ride', time: '0.5 hr', food: '', budget: 'Included', action: '', comments: 'Departs Circular Quay' },
+                { id: '5_2', place: 'Taronga Zoo Sydney', activity: 'Zoo Visit', time: '6 hrs', food: '', budget: '$50–70', action: 'Buy Entry', comments: '' },
+                { id: '5_3', place: 'Taronga Ferry', activity: 'Return Ferry', time: '0.5 hr', food: '', budget: 'Included', action: '', comments: '' },
+                { id: '5_4', place: 'Darling Harbour', activity: 'Evening Walk', time: '2 hrs', food: 'Pavlova', budget: '$10–15', action: '', comments: '' },
+                { id: '5_5', place: 'Darling Harbour', activity: 'Dinner', time: '2 hrs', food: 'Kangaroo Steak', budget: '$30–50', action: 'Reserve Table', comments: 'Meat District Co.' }
+            ]},
+            { dayId: 'day_6', day: 6, dateLabel: 'Day 6', title: 'Marine Life & Seafood', activities: [
+                { id: '6_1', place: 'Sydney Harbour', activity: 'Whale Watching Cruise', time: '3 hrs', food: '', budget: '$70–120', action: 'Book Boat', comments: 'Seasonal (May-Nov)' },
+                { id: '6_2', place: 'Sydney Fish Market', activity: 'Seafood Lunch', time: '1.5 hrs', food: 'Lobster, Prawns', budget: '$30–60', action: '', comments: 'Get there early for best pick' },
+                { id: '6_3', place: 'Harbour Foreshore', activity: 'Walking', time: '3 hrs', food: '', budget: 'Free', action: '', comments: '' },
+                { id: '6_4', place: 'Darling Harbour', activity: 'Relaxation', time: '2 hrs', food: 'Oysters', budget: '$20–30', action: '', comments: '' }
+            ]},
+            { dayId: 'day_7', day: 7, dateLabel: 'Day 7', title: 'Manly Beach Day', activities: [
+                { id: '7_1', place: 'Manly Ferry', activity: 'Ferry Ride (Round Trip)', time: '1 hr', food: '', budget: '$15–20', action: '', comments: 'Tap on with credit card' },
+                { id: '7_2', place: 'Manly Beach', activity: 'Beach Time', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: '' },
+                { id: '7_3', place: 'Shelly Beach', activity: 'Coastal Walk & Snorkelling', time: '2 hrs', food: '', budget: '$30–80', action: '', comments: 'Wetsuit required in winter' },
+                { id: '7_4', place: 'Manly', activity: 'Lunch', time: '1 hr', food: 'Fish Burger', budget: '$20–30', action: '', comments: '' },
+                { id: '7_5', place: 'Manly Corso', activity: 'Explore Area', time: '3 hrs', food: 'Gelato', budget: '$10', action: '', comments: '' }
+            ]},
+            { dayId: 'day_8', day: 8, dateLabel: 'Day 8', title: 'Watsons Bay & Lighthouses', activities: [
+                { id: '8_1', place: 'Watsons Bay', activity: 'Harbour Exploration', time: '2 hrs', food: 'Fish & Chips', budget: '$20–30', action: '', comments: 'Doyles on the Beach' },
+                { id: '8_2', place: 'South Head', activity: 'Coastal Walk', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Gap Bluff' },
+                { id: '8_3', place: 'Hornby Lighthouse', activity: 'Photography', time: '1 hr', food: '', budget: 'Free', action: '', comments: 'Iconic red and white stripes' },
+                { id: '8_4', place: 'Coastal Cliffs', activity: 'Relaxation', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' }
+            ]},
+            { dayId: 'day_9', day: 9, dateLabel: 'Day 9', title: 'CBD Shopping & Culture', activities: [
+                { id: '9_1', place: 'Queen Victoria Building', activity: 'Shopping & Architecture', time: '3 hrs', food: '', budget: 'Variable', action: '', comments: 'Look at the Royal Clock' },
+                { id: '9_2', place: 'Sydney CBD', activity: 'Lunch', time: '1 hr', food: 'Australian Chocolates', budget: '$20–30', action: '', comments: 'Haighs Chocolates' },
+                { id: '9_3', place: 'Pitt Street Mall', activity: 'Shopping', time: '4 hrs', food: '', budget: 'Variable', action: '', comments: '' },
+                { id: '9_4', place: 'Sydney CBD', activity: 'Theatre / Concert', time: '3 hrs', food: '', budget: '$50–200', action: 'Buy Tickets', comments: 'State Theatre or Capitol' }
+            ]},
+            { dayId: 'day_10', day: 10, dateLabel: 'Day 10', title: 'Bridge Climb & Barangaroo', activities: [
+                { id: '10_1', place: 'Sydney Harbour Bridge', activity: 'BridgeClimb', time: '4 hrs', food: '', budget: '$250–400', action: 'Book Climb', comments: 'Must book well in advance' },
+                { id: '10_2', place: 'The Rocks', activity: 'Lunch', time: '1.5 hrs', food: 'Wagyu Steak', budget: '$30–60', action: '', comments: 'Celebrate the climb!' },
+                { id: '10_3', place: 'Observatory Hill', activity: 'Relaxation & Views', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Great spot to rest legs' },
+                { id: '10_4', place: 'Barangaroo Reserve', activity: 'Twilight Harbour Walk', time: '2.5 hrs', food: 'Wine & Tapas', budget: '$20–40', action: '', comments: 'Beautiful modern precinct' }
+            ]},
+            { dayId: 'day_11', day: 11, dateLabel: 'Day 11', title: 'Cockatoo Island Heritage', activities: [
+                { id: '11_1', place: 'Cockatoo Island', activity: 'Ferry Transfer', time: '0.5 hr', food: '', budget: '$10', action: '', comments: '' },
+                { id: '11_2', place: 'Cockatoo Island', activity: 'Heritage Tour', time: '3.5 hrs', food: '', budget: 'Free', action: '', comments: 'Old convict and naval shipyard' },
+                { id: '11_3', place: 'Cockatoo Island', activity: 'Lunch', time: '1 hr', food: 'Café Meals', budget: '$20–30', action: '', comments: '' },
+                { id: '11_4', place: 'Cockatoo Island', activity: 'Exploration & Photography', time: '3 hrs', food: '', budget: 'Free', action: '', comments: 'Industrial ruins are great for photos' }
+            ]},
+            { dayId: 'day_12', day: 12, dateLabel: 'Day 12', title: 'Shark Island Picnic', activities: [
+                { id: '12_1', place: 'Shark Island', activity: 'Ferry Transfers', time: '1 hr', food: '', budget: '$10–15', action: 'Book Ferry', comments: 'Requires specific Captain Cook ferry' },
+                { id: '12_2', place: 'Shark Island', activity: 'Picnic & Harbour Views', time: '4 hrs', food: 'Picnic Lunch', budget: '$15–30', action: 'Pack Food', comments: 'No shops on island' },
+                { id: '12_3', place: 'Shark Island', activity: 'Walking & Relaxation', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Explore the grottos' }
+            ]},
+            { dayId: 'day_13', day: 13, dateLabel: 'Day 13', title: 'Hunter Valley Wine Region', activities: [
+                { id: '13_1', place: 'Sydney to Hunter Valley', activity: 'Travel', time: '2.5 hrs', food: '', budget: 'Included', action: 'Rent Car / Tour', comments: 'Drive north' },
+                { id: '13_2', place: 'Hunter Valley', activity: 'Wine Tasting & Vineyards', time: '3 hrs', food: '', budget: '$40–80', action: 'Book Tasting', comments: 'Shiraz and Semillon' },
+                { id: '13_3', place: 'Hunter Valley', activity: 'Lunch', time: '1.5 hrs', food: 'Estate Lunch', budget: '$30–60', action: '', comments: '' },
+                { id: '13_4', place: 'Hunter Valley Gardens', activity: 'Explore Gardens', time: '2 hrs', food: '', budget: '$35', action: '', comments: '' },
+                { id: '13_5', place: 'Hunter Valley to Sydney', activity: 'Return Travel', time: '2.5 hrs', food: '', budget: 'Included', action: '', comments: '' }
+            ]},
+            { dayId: 'day_14', day: 14, dateLabel: 'Day 14', title: 'Skydiving Adventure', activities: [
+                { id: '14_1', place: 'Wollongong Dropzone', activity: 'Check-in & Briefing', time: '2 hrs', food: '', budget: 'Included', action: 'Confirm Time', comments: 'Skydive Sydney-Wollongong' },
+                { id: '14_2', place: 'Wollongong', activity: 'Tandem Jump', time: '1 hr', food: '', budget: '$300–450', action: '', comments: 'Beach landing!' },
+                { id: '14_3', place: 'Skydiving Centre', activity: 'Photos & Videos', time: '1 hr', food: '', budget: 'Optional', action: '', comments: '' },
+                { id: '14_4', place: 'Wollongong', activity: 'Weather Buffer Time', time: '2 hrs', food: '', budget: 'Included', action: '', comments: 'Jumps delayed by wind' },
+                { id: '14_5', place: 'Return to Sydney', activity: 'Travel', time: '2 hrs', food: 'Beach Café', budget: '$20–30', action: '', comments: '' }
+            ]},
+            { dayId: 'day_15', day: 15, dateLabel: 'Day 15', title: 'Farewell Sydney', activities: [
+                { id: '15_1', place: 'Flexible Buffer', activity: 'Missed Activities', time: '3 hrs', food: 'Favourite Food', budget: 'Variable', action: '', comments: 'Catch up on anything missed' },
+                { id: '15_2', place: 'Sydney CBD', activity: 'Souvenir Shopping', time: '2 hrs', food: '', budget: 'Variable', action: '', comments: 'Paddys Market' },
+                { id: '15_3', place: 'Beach or Harbour', activity: 'Final Relaxation', time: '3 hrs', food: '', budget: '$20–50', action: '', comments: 'Enjoy the final sunset' }
+            ]},
+            { dayId: 'day_16', day: 16, dateLabel: 'Day 16', city: 'Melbourne', title: 'Melbourne\'s Soul', activities: [
+                { id: '16_1', place: 'Melbourne CBD', activity: 'Slow Breakfast & Coffee', time: '2 hrs', food: 'Flat White', budget: '$15–25', action: '', comments: 'Start at a classic café. Bring a notebook. Settle into the pace.' },
+                { id: '16_2', place: 'State Library Victoria', activity: 'Domed Reading Room', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: 'Spend time reflecting beneath the iconic dome.' },
+                { id: '16_3', place: 'Melbourne Laneways', activity: 'Laneway Wandering (Degraves St, Centre Pl)', time: '1.5 hrs', food: 'Laneway Lunch', budget: '$20–40', action: '', comments: 'Discover details rather than rushing.' },
+                { id: '16_4', place: 'Royal Botanic Gardens Victoria', activity: 'Afternoon Walk', time: '3.5 hrs', food: 'Coffee', budget: 'Free', action: '', comments: 'Notice old trees, birds, people. Doing nothing is meaningful.' },
+                { id: '16_5', place: 'Yarra River', activity: 'Sunset Walk', time: '1.5 hrs', food: '', budget: 'Free', action: '', comments: 'Watch the evening light reflecting on the water.' },
+                { id: '16_6', place: 'Hidden Laneway Bar', activity: 'Dinner & Drinks', time: '2 hrs', food: 'Restaurant Meal', budget: '$40–80', action: 'Find Bar', comments: 'Melbourne reveals itself best after dark.' }
+            ]},
+            { dayId: 'day_17', day: 17, dateLabel: 'Day 17', city: 'Melbourne', title: 'Art, Coastline & Reflection', activities: [
+                { id: '17_1', place: 'Fitzroy / Carlton', activity: 'Coffee & Journaling', time: '2 hrs', food: 'Café Breakfast', budget: '$10–20', action: '', comments: 'Find a quiet neighbourhood café to write or read.' },
+                { id: '17_2', place: 'Hosier Lane', activity: 'Street Art & Reflections', time: '1.5 hrs', food: '', budget: 'Free', action: '', comments: 'Cinematic atmosphere, especially after rain.' },
+                { id: '17_3', place: 'Federation Square & NGV', activity: 'Gallery Visit', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: 'Experience Melbourne\'s creative identity.' },
+                { id: '17_4', place: 'Brighton Beach', activity: 'Slow Shoreline Walk', time: '2.5 hrs', food: '', budget: '$10', action: '', comments: 'Take the tram. Embrace the melancholic, windy atmosphere.' },
+                { id: '17_5', place: 'Brighton Bathing Boxes', activity: 'Sunset Viewing', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: 'Iconic colorful boxes and changing sea light.' },
+                { id: '17_6', place: 'Melbourne CBD', activity: 'Final Evening Walk', time: '2 hrs', food: 'Late Dinner', budget: '$20–40', action: '', comments: 'Aimless walk. No destination. Just wander.' }
+            ]}
+        ];
+
+        // --- APP STATE ---
+        let itineraryData = [];
+        let completedActivities = [];
+        let savedActivities = [];
+        let roughNotes = "";
+        
+        let currentTab = 'overview';
+        let scrollPositions = { overview: 0, itinerary: 0, tasks: 0, saved: 0, notes: 0, edit: 0, admin: 0 };
+        let activityToDelete = null;
+
+        // --- STREAMING_CHUNK:Load & Sync Logic ---
+        function loadData() {
+            // CRITICAL FIX: Always pull from Local Storage FIRST to preserve user edits between code updates.
+            const localData = localStorage.getItem('sydneyCustomData');
+            
+            // Apply default city to base template
+            defaultItinerary.forEach(d => { if(!d.city) d.city = 'Sydney'; });
+
+            if (localData) {
+                console.log("Found local user data. Loading custom edits.");
+                itineraryData = JSON.parse(localData);
+                
+                // Smart Migration: Backfill city and automatically append new Melbourne days
+                let needsSave = false;
+                itineraryData.forEach(d => { 
+                    if(!d.city) { d.city = 'Sydney'; needsSave = true; } 
+                });
+                
+                const hasMelbourne = itineraryData.some(d => d.city === 'Melbourne');
+                if (!hasMelbourne) {
+                    const melbourneDays = defaultItinerary.filter(d => d.city === 'Melbourne');
+                    itineraryData.push(...melbourneDays);
+                    needsSave = true;
+                }
+                
+                if(needsSave) saveData();
+
+            } else {
+                console.log("No local data found. Loading default template.");
+                itineraryData = JSON.parse(JSON.stringify(defaultItinerary));
+            }
+            
+            completedActivities = JSON.parse(localStorage.getItem('sydneyCompleted')) || [];
+            savedActivities = JSON.parse(localStorage.getItem('sydneySaved')) || [];
+            roughNotes = localStorage.getItem('sydneyNotes') || "";
+            
+            document.getElementById('notes-editor').innerHTML = roughNotes;
+            
+            // Recalculate dynamic times and budgets to ensure accuracy
+            recalculateAllTotals();
+            
+            // Render UI
+            renderOverview();
+            renderItinerary();
+            renderDirectory();
+            renderTasks();
+            renderSaved();
+            renderEditView();
+            updateProgress();
+        }
+
+        function saveData() {
+            localStorage.setItem('sydneyCustomData', JSON.stringify(itineraryData));
+            localStorage.setItem('sydneyCompleted', JSON.stringify(completedActivities));
+            localStorage.setItem('sydneySaved', JSON.stringify(savedActivities));
+            
+            // Flash save indicator
+            const indicator = document.getElementById('sync-status');
+            indicator.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-sky-500 mr-1.5"></i> Saved';
+            setTimeout(() => {
+                indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save';
+            }, 1500);
+        }
+
+        // --- STREAMING_CHUNK:Math & Formatting Helpers ---
+        function recalculateAllTotals() {
+            itineraryData.forEach(day => {
+                let totalMin = 0; let validTime = false;
+                let bMin = 0; let bMax = 0; let validBudget = false;
+                
+                day.activities.forEach(act => {
+                    // Time Parsing
+                    let t = (act.time || '').toLowerCase();
+                    let tVal = parseFloat(t);
+                    if (!isNaN(tVal)) {
+                        if (t.includes('min')) tVal = tVal / 60;
+                        totalMin += tVal;
+                        validTime = true;
+                    }
+                    
+                    // Budget Parsing (Smart Regex)
+                    let b = (act.budget || '').toLowerCase();
+                    let rangeMatch = b.match(/(\d+)\s*-\s*(\d+)/);
+                    let freeRangeMatch = b.match(/free\s*-\s*(\d+)/); 
+                    
+                    if (rangeMatch) {
+                        bMin += parseInt(rangeMatch[1], 10);
+                        bMax += parseInt(rangeMatch[2], 10);
+                        validBudget = true;
+                    } else if (freeRangeMatch) {
+                        bMin += 0;
+                        bMax += parseInt(freeRangeMatch[1], 10);
+                        validBudget = true;
+                    } else {
+                        // Check for single numbers
+                        let nums = b.match(/(\d+)/g);
+                        if (nums && nums.length === 1) {
+                            bMin += parseInt(nums[0], 10);
+                            bMax += parseInt(nums[0], 10);
+                            validBudget = true;
+                        } else if (nums && nums.length > 1) {
+                            bMin += parseInt(nums[0], 10);
+                            bMax += parseInt(nums[1], 10); // Fallback for things like "$10 to $20"
+                            validBudget = true;
+                        }
+                    }
+                });
+                
+                day.totalTime = validTime ? (Math.round(totalMin * 10) / 10) + " hrs" : "0 hrs";
+                if(validBudget) {
+                    day.totalBudget = (bMin === bMax) ? `$${bMin}` : `$${bMin}–${bMax}`;
+                } else {
+                    day.totalBudget = "Free / Variable";
+                }
+            });
+        }
+
+        function backgroundSync() {
+            // Live-syncs all views in the background without stealing focus from the Edit inputs
+            renderOverview();
+            renderItinerary();
+            renderDirectory();
+            renderTasks();
+            renderSaved();
+            updateProgress();
+        }
+
+        function sortItinerary() {
+            itineraryData.sort((a, b) => {
+                let timeA = a.rawDate ? new Date(a.rawDate).getTime() : Number.MAX_SAFE_INTEGER;
+                let timeB = b.rawDate ? new Date(b.rawDate).getTime() : Number.MAX_SAFE_INTEGER;
+                if (timeA !== timeB) {
+                    return timeA - timeB;
+                }
+                return a.day - b.day; // Fallback to day number order if dates match or are missing
+            });
+            // Re-sequence day numbers after sort
+            itineraryData.forEach((d, i) => d.day = i + 1);
+        }
+
+        function getEmoji(activity, place) {
+            const text = (activity + ' ' + place).toLowerCase();
+            if (text.includes('ferry') || text.includes('cruise')) return '⛴️';
+            if (text.includes('beach') || text.includes('swim') || text.includes('snorkel')) return '🏖️';
+            if (text.includes('zoo') || text.includes('wildlife')) return '🐨';
+            if (text.includes('skydiv')) return '🪂';
+            if (text.includes('breakfast') || text.includes('coffee')) return '☕';
+            if (text.includes('lunch') || text.includes('dinner') || text.includes('food') || text.includes('pie') || text.includes('steak')) return '🍽️';
+            if (text.includes('drink') || text.includes('wine')) return '🍷';
+            if (text.includes('walk') || text.includes('hike') || text.includes('explore')) return '🚶';
+            if (text.includes('shop') || text.includes('market')) return '🛍️';
+            if (text.includes('museum') || text.includes('gallery')) return '🏛️';
+            if (text.includes('tour') || text.includes('travel')) return '🗺️';
+            if (text.includes('garden') || text.includes('park') || text.includes('nature')) return '🌳';
+            if (text.includes('theatre') || text.includes('concert')) return '🎭';
+            if (text.includes('climb')) return '🧗';
+            return '📍';
+        }
+
+        // --- STREAMING_CHUNK:Core UI Functions ---
+        function switchTab(tabId) {
+            // Save scroll position for current tab
+            scrollPositions[currentTab] = window.scrollY;
+
+            // Hide all tabs
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-sky-600', 'active');
+                el.classList.add('text-gray-400');
+            });
+
+            // Show selected tab
+            document.getElementById(`view-${tabId}`).classList.add('active');
+            
+            // Safely toggle nav button colors (prevents errors if button is missing)
+            const navBtn = document.getElementById(`nav-${tabId}`);
+            if(navBtn) {
+                navBtn.classList.remove('text-gray-400');
+                navBtn.classList.add('text-sky-600', 'active');
+            }
+
+            currentTab = tabId;
+
+            // Restore scroll position
+            window.scrollTo(0, scrollPositions[tabId] || 0);
+        }
+
+        function updateProgress() {
+            let totalActivitiesCount = 0;
+            itineraryData.forEach(d => totalActivitiesCount += d.activities.length);
+            
+            const checkedCount = completedActivities.length;
+            const percent = totalActivitiesCount > 0 ? Math.round((checkedCount / totalActivitiesCount) * 100) : 0;
+            
+            document.getElementById('total-progress-bar').style.width = `${percent}%`;
+            document.getElementById('total-progress-text').innerText = `${percent}%`;
+            
+            if(percent === 100) {
+                document.getElementById('total-progress-bar').classList.remove('bg-sky-500');
+                document.getElementById('total-progress-bar').classList.add('bg-green-500');
+            } else {
+                document.getElementById('total-progress-bar').classList.remove('bg-green-500');
+                document.getElementById('total-progress-bar').classList.add('bg-sky-500');
+            }
+        }
+
+        function toggleComplete(id) {
+            const index = completedActivities.indexOf(id);
+            if (index > -1) {
+                completedActivities.splice(index, 1);
+            } else {
+                completedActivities.push(id);
+            }
+            saveData();
+            updateProgress();
+            
+            // Re-render UI to strike-through text
+            if(currentTab === 'overview') renderOverview();
+            if(currentTab === 'itinerary') renderItinerary();
+            if(currentTab === 'tasks') renderTasks();
+            if(currentTab === 'saved') renderSaved();
+        }
+
+        function toggleSave(id) {
+            const index = savedActivities.indexOf(id);
+            if (index > -1) {
+                savedActivities.splice(index, 1);
+            } else {
+                savedActivities.push(id);
+            }
+            saveData();
+            
+            if(currentTab === 'itinerary') renderItinerary();
+            if(currentTab === 'tasks') renderTasks();
+            if(currentTab === 'saved') renderSaved();
+        }
+
+        function scrollToDay(dayIdStr) {
+            const el = document.getElementById(`day-header-${dayIdStr}`);
+            if (el) {
+                // Adjust for sticky headers
+                const y = el.getBoundingClientRect().top + window.pageYOffset - 110;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }
+        }
+
+        // --- STREAMING_CHUNK:View Renderers ---
+        function renderOverview() {
+            const container = document.getElementById('overview-container');
+            container.innerHTML = '';
+            
+            itineraryData.forEach(dayData => {
+                const dayActs = dayData.activities;
+                if(dayActs.length === 0) return;
+                
+                const completedInDay = dayActs.filter(a => completedActivities.includes(a.id)).length;
+                const percent = Math.round((completedInDay / dayActs.length) * 100);
+                
+                const listHTML = dayActs.map(act => {
+                    const isDone = completedActivities.includes(act.id);
+                    return `<li class="text-[11px] flex items-center mb-1.5 overflow-hidden ${isDone ? 'line-through text-gray-400' : 'text-gray-600'}">
+                                <span class="mr-1.5 shrink-0">${getEmoji(act.activity, act.place)}</span> 
+                                <span class="truncate"><strong>${act.place}:</strong> ${act.activity}</span>
+                            </li>`;
+                }).join('');
+                
+                container.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-all group flex flex-col h-full cursor-pointer" onclick="switchTab('itinerary'); setTimeout(()=>scrollToDay('${dayData.dayId}'), 50);">
+                        <div class="flex justify-between items-center mb-1">
+                            <h2 class="text-base font-bold text-gray-800">${dayData.dateLabel} <span class="text-[10px] text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded ml-1 tracking-wide"><i class="fa-solid fa-location-dot mr-0.5"></i>${dayData.city || 'Sydney'}</span></h2>
+                            <span class="text-[10px] font-bold px-2 py-0.5 ${percent === 100 ? 'bg-green-100 text-green-700' : 'bg-sky-50 text-sky-700'} rounded-full">${percent}%</span>
+                        </div>
+                        <h3 class="text-xs font-medium text-gray-500 mb-3 line-clamp-1 border-b border-gray-100 pb-2">${dayData.title}</h3>
+                        
+                        <ul class="mb-4 pl-1 flex-grow">
+                            ${listHTML}
+                        </ul>
+
+                        <div class="mt-auto">
+                            <div class="flex justify-between text-[10px] text-gray-500 mb-2 font-medium">
+                                <span class="bg-gray-50 px-2 py-1 rounded"><i class="fa-regular fa-clock mr-1"></i> ${dayData.totalTime}</span>
+                                <span class="bg-gray-50 px-2 py-1 rounded"><i class="fa-solid fa-wallet mr-1"></i> ${dayData.totalBudget}</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-1">
+                                <div class="${percent === 100 ? 'bg-green-500' : 'bg-sky-500'} h-1 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderDirectory() {
+            const dirContainer = document.getElementById('day-directory');
+            dirContainer.innerHTML = '';
+            itineraryData.forEach(day => {
+                const btn = document.createElement('button');
+                btn.onclick = () => scrollToDay(day.dayId);
+                btn.className = 'whitespace-nowrap flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-white border border-gray-200 text-gray-600 hover:bg-sky-50 hover:text-sky-700 shadow-sm';
+                
+                // Shorten name if too long
+                let shortName = day.dateLabel.length > 10 ? `<span class="truncate max-w-[80px] inline-block align-bottom">${day.dateLabel}</span>` : day.dateLabel;
+                btn.innerHTML = shortName;
+                dirContainer.appendChild(btn);
+            });
+        }
+
+        // Shared Activity Card Generator
+        function generateActivityHTML(act, dayContext = '') {
+            const isChecked = completedActivities.includes(act.id) ? 'checked' : '';
+            const isSaved = savedActivities.includes(act.id);
+            const emoji = getEmoji(act.activity, act.place);
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(act.place + ' Australia')}`;
+            
+            let actionBorder = (act.action && act.action.trim() !== '') ? 'border-l-4 border-l-rose-500 shadow-sm' : 'border border-gray-200';
+            let dayBadge = dayContext ? `<div class="mb-2"><span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">${dayContext}</span></div>` : '';
+            
+            return `
+            <div class="bg-white rounded-lg p-3.5 mb-3 ${actionBorder} transition-all relative">
+                ${(act.action && act.action.trim() !== '') ? `<div class="absolute -top-2.5 right-3 bg-rose-500 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-sm uppercase tracking-wider"><i class="fa-solid fa-bell mr-1"></i>${act.action}</div>` : ''}
+                
+                ${dayBadge}
+                <div class="flex items-start gap-3">
+                    <div class="mt-0.5">
+                        <input type="checkbox" ${isChecked} onchange="toggleComplete('${act.id}')" class="w-5 h-5 rounded border-gray-300 text-sky-600 cursor-pointer">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-sm font-bold text-gray-800 ${isChecked ? 'line-through text-gray-400' : ''}">${emoji} ${act.place}</h3>
+                            <button onclick="toggleSave('${act.id}')" class="text-lg ${isSaved ? 'text-rose-500' : 'text-gray-300'} ml-2 transition-colors">
+                                <i class="fa-${isSaved ? 'solid' : 'regular'} fa-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <p class="text-[13px] text-gray-600 mt-0.5 mb-2.5 ${isChecked ? 'text-gray-400' : ''}">${act.activity}</p>
+                        
+                        <div class="flex flex-wrap gap-1.5">
+                            ${act.time ? `<span class="inline-flex items-center bg-gray-50 text-gray-600 text-[10px] font-medium px-2 py-1 rounded border border-gray-100"><i class="fa-regular fa-clock mr-1 text-gray-400"></i> ${act.time}</span>` : ''}
+                            ${act.budget ? `<span class="inline-flex items-center bg-gray-50 text-gray-600 text-[10px] font-medium px-2 py-1 rounded border border-gray-100"><i class="fa-solid fa-wallet mr-1 text-gray-400"></i> ${act.budget}</span>` : ''}
+                            ${act.food ? `<span class="inline-flex items-center bg-amber-50 text-amber-700 text-[10px] font-medium px-2 py-1 rounded border border-amber-100"><i class="fa-solid fa-utensils mr-1"></i> ${act.food}</span>` : ''}
+                            <a href="${mapUrl}" target="_blank" class="inline-flex items-center bg-emerald-50 text-emerald-700 text-[10px] font-medium px-2 py-1 rounded border border-emerald-100 hover:bg-emerald-100 transition-colors"><i class="fa-solid fa-location-dot mr-1"></i> Map</a>
+                        </div>
+
+                        ${act.comments ? `
+                        <div class="mt-2.5 bg-blue-50/50 border-l-2 border-blue-300 pl-2 py-0.5 text-[11px] text-blue-800/80 italic">
+                             ${act.comments}
+                        </div>` : ''}
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderItinerary() {
+            const container = document.getElementById('itinerary-container');
+            container.innerHTML = '';
+
+            itineraryData.forEach(dayData => {
+                const dayCard = document.createElement('div');
+                dayCard.className = 'mb-6 scroll-mt-24';
+                dayCard.id = `day-header-${dayData.dayId}`;
+                
+                const activitiesHTML = dayData.activities.map(act => generateActivityHTML(act)).join('');
+                
+                dayCard.innerHTML = `
+                    <div class="flex items-center justify-between mb-3 pl-1">
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800">${dayData.dateLabel} <span class="text-xs text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded ml-1 tracking-wide inline-block align-text-bottom"><i class="fa-solid fa-location-dot mr-0.5"></i>${dayData.city || 'Sydney'}</span> <span class="text-sm font-medium text-gray-500 ml-1 block sm:inline">${dayData.title}</span></h2>
+                        </div>
+                        <div class="text-[10px] text-gray-400 font-bold bg-white px-2 py-1 rounded-md border border-gray-200 shadow-sm whitespace-nowrap ml-2">
+                            ${dayData.totalTime} • ${dayData.totalBudget}
+                        </div>
+                    </div>
+                    <div class="space-y-0">
+                        ${activitiesHTML || '<p class="text-xs text-gray-400 italic py-4">No activities planned.</p>'}
+                    </div>
+                `;
+                container.appendChild(dayCard);
+            });
+        }
+
+        function renderTasks() {
+            const container = document.getElementById('tasks-container');
+            let html = '';
+            itineraryData.forEach(day => {
+                day.activities.forEach(act => {
+                    if (act.action && act.action.trim() !== '') {
+                        html += generateActivityHTML(act, day.dateLabel);
+                    }
+                });
+            });
+            container.innerHTML = html || `<div class="bg-gray-50 p-8 rounded-xl text-center border border-gray-200"><i class="fa-solid fa-mug-hot text-gray-300 text-4xl mb-3 block"></i><p class="text-gray-500 text-sm">You have no pending actions. Relax!</p></div>`;
+        }
+
+        function renderSaved() {
+            const container = document.getElementById('saved-container');
+            let html = '';
+            itineraryData.forEach(day => {
+                day.activities.forEach(act => {
+                    if (savedActivities.includes(act.id)) html += generateActivityHTML(act, day.dateLabel);
+                });
+            });
+            container.innerHTML = html || `<div class="bg-gray-50 p-8 rounded-xl text-center border border-gray-200"><i class="fa-regular fa-heart text-gray-300 text-4xl mb-3 block"></i><p class="text-gray-500 text-sm">Click the heart on any activity to save it here.</p></div>`;
+        }
+
+        // --- STREAMING_CHUNK:Notes Editor Logic ---
+        let notesTimeout;
+        function saveNotes() {
+            clearTimeout(notesTimeout);
+            notesTimeout = setTimeout(() => {
+                roughNotes = document.getElementById('notes-editor').innerHTML;
+                localStorage.setItem('sydneyNotes', roughNotes);
+                
+                // Flash status
+                const indicator = document.getElementById('sync-status');
+                indicator.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-purple-500 mr-1.5"></i> Notes Saved';
+                setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 1000);
+            }, 800); // 800ms debounce
+        }
+        function formatNote(command) {
+            document.execCommand(command, false, null);
+            document.getElementById('notes-editor').focus();
+            saveNotes();
+        }
+
+        // --- STREAMING_CHUNK:Spreadsheet Editor Engine ---
+        function renderEditView() {
+            const container = document.getElementById('edit-container');
+            container.innerHTML = '';
+            
+            itineraryData.forEach((dayData) => {
+                const dayIdStr = dayData.dayId;
+                const dayCard = document.createElement('div');
+                dayCard.className = 'bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden';
+                
+                let rowsHTML = dayData.activities.map((act, actIndex) => `
+                    <tr class="hover:bg-slate-50 border-b border-gray-100 group">
+                        <td class="p-1 align-top w-48 min-w-[150px]">
+                            <input type="text" value="${act.place || ''}" placeholder="Location..." onchange="inlineUpdate('${dayIdStr}', ${actIndex}, 'place', this.value)" class="edit-input font-semibold text-gray-800">
+                        </td>
+                        <td class="p-1 align-top min-w-[180px]">
+                            <input type="text" value="${act.activity || ''}" placeholder="What to do..." onchange="inlineUpdate('${dayIdStr}', ${actIndex}, 'activity', this.value)" class="edit-input text-gray-600">
+                        </td>
+                        <td class="p-1 align-top w-24">
+                            <input type="text" value="${act.time || ''}" placeholder="e.g. 2 hrs" onchange="inlineUpdate('${dayIdStr}', ${actIndex}, 'time', this.value)" class="edit-input text-gray-600">
+                        </td>
+                        <td class="p-1 align-top w-32">
+                            <input type="text" value="${act.food || ''}" placeholder="Food nearby..." onchange="inlineUpdate('${dayIdStr}', ${actIndex}, 'food', this.value)" class="edit-input text-gray-600">
+                        </td>
+                        <td class="p-1 align-top w-24">
+                            <input type="text" value="${act.budget || ''}" placeholder="$..." onchange="inlineUpdate('${dayIdStr}', ${actIndex}, 'budget', this.value)" class="edit-input text-gray-600">
+                        </td>
+                        <td class="p-1 align-top w-32">
+                            <input type="text" value="${act.action || ''}" placeholder="Bookings..." onchange="inlineUpdate('${dayIdStr}', ${actIndex}, 'action', this.value)" class="edit-input text-rose-600 placeholder:text-rose-300">
+                        </td>
+                        <td class="p-1 align-top w-40">
+                            <input type="text" value="${act.comments || ''}" placeholder="Notes..." onchange="inlineUpdate('${dayIdStr}', ${actIndex}, 'comments', this.value)" class="edit-input text-gray-500 text-[11px] italic">
+                        </td>
+                        <td class="p-1 align-middle text-center w-10">
+                            <button onclick="openDeleteModal('${dayIdStr}', ${actIndex})" class="text-gray-300 hover:text-rose-500 p-1.5 rounded hover:bg-rose-50 transition-colors" title="Delete Row">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                dayCard.innerHTML = `
+                    <div class="bg-slate-800 px-4 py-2.5 flex flex-col sm:flex-row justify-between sm:items-center text-white gap-3">
+                        <div class="flex gap-2 items-center flex-wrap">
+                            <!-- Custom Date Picker -->
+                            <div class="relative w-8 h-8 rounded bg-slate-700 hover:bg-slate-600 transition flex items-center justify-center cursor-pointer border border-slate-600" title="Set specific date">
+                                <i class="fa-regular fa-calendar text-xs text-sky-400"></i>
+                                <input type="date" value="${dayData.rawDate || ''}" onchange="setDate('${dayIdStr}', this.value)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                            </div>
+                            
+                            <input type="text" value="${dayData.dateLabel}" onchange="updateHeader('${dayIdStr}', 'dateLabel', this.value)" class="font-bold text-sm bg-transparent border-b border-transparent hover:border-slate-500 focus:border-sky-400 outline-none w-20 sm:w-28 placeholder:text-slate-500" placeholder="Day Name">
+                            <span class="text-slate-500">•</span>
+                            <input type="text" value="${dayData.city || 'Sydney'}" onchange="updateHeader('${dayIdStr}', 'city', this.value)" class="font-bold text-sm text-sky-400 bg-transparent border-b border-transparent hover:border-slate-500 focus:border-sky-400 outline-none w-20 sm:w-24 placeholder:text-slate-500" placeholder="City">
+                            <span class="text-slate-500">•</span>
+                            <input type="text" value="${dayData.title || ''}" onchange="updateHeader('${dayIdStr}', 'title', this.value)" class="font-normal text-sm bg-transparent border-b border-transparent hover:border-slate-500 focus:border-sky-400 outline-none flex-1 min-w-[120px] placeholder:text-slate-500" placeholder="Theme / Location">
+                        </div>
+                        
+                        <div class="flex gap-2 justify-end">
+                            <select onchange="mergeDay('${dayIdStr}', this.value); this.value=''" class="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-50 px-2.5 py-1.5 rounded border border-amber-200 hover:bg-amber-100 outline-none cursor-pointer">
+                                <option value="">Merge Into...</option>
+                                ${itineraryData.filter(d => d.dayId != dayIdStr).map(d => `<option value="${d.dayId}">${d.dateLabel}</option>`).join('')}
+                            </select>
+                            <button onclick="inlineAdd('${dayIdStr}')" class="text-[10px] font-bold uppercase tracking-wider text-slate-800 bg-white px-2.5 py-1.5 rounded hover:bg-sky-50 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-plus mr-1"></i> Row</button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto w-full custom-scrollbar bg-white">
+                        <table class="w-full text-left border-collapse min-w-[900px]">
+                            <thead>
+                                <tr class="bg-slate-50 text-[10px] text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                    <th class="p-2 pl-3 font-semibold">Location</th>
+                                    <th class="p-2 font-semibold">Activity</th>
+                                    <th class="p-2 font-semibold">Time</th>
+                                    <th class="p-2 font-semibold">Food</th>
+                                    <th class="p-2 font-semibold">Cost</th>
+                                    <th class="p-2 font-semibold text-rose-500">Action Req.</th>
+                                    <th class="p-2 font-semibold">Notes</th>
+                                    <th class="p-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHTML || `<tr><td colspan="8" class="p-8 text-center text-sm text-gray-400 italic bg-gray-50">Empty day. Add a row or merge data here.</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                container.appendChild(dayCard);
+            });
+        }
+
+        // --- STREAMING_CHUNK:Edit Data Modifiers ---
+        function inlineUpdate(dayIdStr, actIndex, field, value) {
+            const dayIndex = itineraryData.findIndex(d => d.dayId === dayIdStr);
+            if (dayIndex === -1) return;
+            
+            itineraryData[dayIndex].activities[actIndex][field] = value.trim();
+            
+            if (field === 'time' || field === 'budget') {
+                recalculateAllTotals();
+            }
+            saveData();
+            backgroundSync(); // Instantly push text/number changes to other tabs
+        }
+
+        function inlineAdd(dayIdStr) {
+            const dayIndex = itineraryData.findIndex(d => d.dayId === dayIdStr);
+            if (dayIndex === -1) return;
+
+            const newId = 'c_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
+            itineraryData[dayIndex].activities.push({
+                id: newId, place: '', activity: '', time: '', food: '', budget: '', action: '', comments: ''
+            });
+            saveData();
+            renderEditView(); // Re-render edit view to show the new empty row
+            backgroundSync(); // Push updates everywhere
+        }
+
+        function updateHeader(dayIdStr, field, value) {
+            const dayIndex = itineraryData.findIndex(d => d.dayId === dayIdStr);
+            if (dayIndex > -1) {
+                itineraryData[dayIndex][field] = value.trim();
+                saveData();
+                backgroundSync();
+            }
+        }
+
+        function setDate(dayIdStr, dateStr) {
+            if(!dateStr) return;
+            const dayIndex = itineraryData.findIndex(d => d.dayId === dayIdStr);
+            if (dayIndex === -1) return;
+            
+            const d = new Date(dateStr);
+            // Fix timezone shift naturally
+            const localDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+            
+            const formatted = localDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            itineraryData[dayIndex].dateLabel = formatted;
+            itineraryData[dayIndex].rawDate = dateStr;
+            
+            sortItinerary(); // Instantly sort into correct ascending chronological order
+            saveData();
+            renderEditView(); // Required to physically move the tables around
+            backgroundSync(); // Updates overview/itinerary to match new order
+        }
+
+        function mergeDay(fromDayId, toDayId) {
+            if(!fromDayId || !toDayId || fromDayId === toDayId) return;
+            
+            const fromIndex = itineraryData.findIndex(d => d.dayId === fromDayId);
+            const toIndex = itineraryData.findIndex(d => d.dayId === toDayId);
+            if (fromIndex === -1 || toIndex === -1) return;
+            
+            // Move activities
+            itineraryData[toIndex].activities = itineraryData[toIndex].activities.concat(itineraryData[fromIndex].activities);
+            // Delete old day
+            itineraryData.splice(fromIndex, 1);
+            
+            recalculateAllTotals();
+            saveData();
+            renderEditView();
+            backgroundSync(); // Live sync merged values
+        }
+
+        function addNewDay() {
+            const newDayNum = itineraryData.length + 1;
+            itineraryData.push({
+                dayId: 'day_c_' + Date.now(),
+                day: newDayNum,
+                dateLabel: `Day ${newDayNum}`,
+                city: 'Sydney',
+                title: 'New Plan',
+                totalTime: '0 hrs',
+                totalBudget: 'Free',
+                activities: []
+            });
+            saveData();
+            renderEditView();
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
+        }
+
+        // --- STREAMING_CHUNK:Delete Modal Logic ---
+        function openDeleteModal(dayIdStr, actIndex) {
+            activityToDelete = { dayIdStr, actIndex };
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+            activityToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (!activityToDelete) return;
+            const { dayIdStr, actIndex } = activityToDelete;
+            
+            const dayIndex = itineraryData.findIndex(d => d.dayId === dayIdStr);
+            if (dayIndex !== -1) {
+                const deletedId = itineraryData[dayIndex].activities[actIndex].id;
+                
+                // Remove from arrays
+                itineraryData[dayIndex].activities.splice(actIndex, 1);
+                completedActivities = completedActivities.filter(id => id !== deletedId);
+                savedActivities = savedActivities.filter(id => id !== deletedId);
+                
+                recalculateAllTotals();
+                saveData();
+                renderEditView();
+                backgroundSync(); // Safely updates progress bar and live views
+            }
+            closeDeleteModal();
+        }
+
+        // --- STREAMING_CHUNK:Backup & Drive Sync Logic ---
+        function exportData() {
+            const backup = { itinerary: itineraryData, completed: completedActivities, saved: savedActivities, notes: roughNotes };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "australia_trip_backup.json");
+            dlAnchorElem.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.itinerary) {
+                        itineraryData = imported.itinerary;
+                        completedActivities = imported.completed || [];
+                        savedActivities = imported.saved || [];
+                        roughNotes = imported.notes || "";
+                        
+                        saveData(); // triggers local storage save
+                        loadData(); // reloads full UI
+                        alert("Backup Restored Successfully!");
+                    }
+                } catch (err) {
+                    alert("Invalid JSON file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function importFromDrive() {
+            const btn = document.getElementById('drive-sync-btn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Syncing...';
+            
+            try {
+                // Using allorigins as a reliable CORS proxy to wrap the raw drive file in JSON
+                const fileId = '16t3rk6KgycbxK_wLHQA3xgIvthb9PqVo';
+                const driveUrl = encodeURIComponent(`https://drive.google.com/uc?export=download&id=${fileId}`);
+                const proxyUrl = `https://api.allorigins.win/get?url=${driveUrl}&disableCache=${Date.now()}`;
+                
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                if (data.contents) {
+                    const imported = JSON.parse(data.contents);
+                    if (imported.itinerary) {
+                        itineraryData = imported.itinerary;
+                        if(imported.completed) completedActivities = imported.completed;
+                        if(imported.saved) savedActivities = imported.saved;
+                        if(imported.notes !== undefined) roughNotes = imported.notes;
+                        
+                        saveData();
+                        loadData();
+                        
+                        const indicator = document.getElementById('sync-status');
+                        indicator.innerHTML = '<i class="fa-brands fa-google-drive text-blue-500 mr-1.5"></i> Drive Synced';
+                        setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
+                    }
+                } else {
+                    throw new Error("Empty contents");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Google Drive sync failed. Ensure the link is set to 'Anyone with the link can view'.");
+            } finally {
+                btn.innerHTML = '<i class="fa-brands fa-google-drive mr-1.5 text-sm"></i> Sync Drive';
+            }
+        }
+
+        // --- STREAMING_CHUNK:Admin Tester Logic ---
+        let tempFetchedData = null;
+
+        function extractDriveId(input) {
+            // Regex to automatically extract the 25+ character ID from standard sharing links
+            const match = input.match(/[-\w]{25,}/);
+            return match ? match[0] : input;
+        }
+
+        async function testDriveFetch() {
+            const btn = document.getElementById('test-fetch-btn');
+            const consoleOut = document.getElementById('admin-console');
+            const inputVal = document.getElementById('admin-drive-url').value.trim();
+            const proxy = document.getElementById('admin-proxy').value;
+            const applyBtn = document.getElementById('apply-test-btn');
+            
+            if(!inputVal) {
+                consoleOut.innerText = "> ERROR: Please enter a Drive link or File ID.";
+                return;
+            }
+
+            const fileId = extractDriveId(inputVal);
+            consoleOut.innerText = `> EXTRACTING ID: ${fileId}\n> PROXY SELECTED: ${proxy}\n> INITIATING FETCH...`;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Fetching...';
+            applyBtn.classList.add('hidden');
+            applyBtn.classList.remove('flex');
+            tempFetchedData = null;
+
+            try {
+                const driveUrl = encodeURIComponent(`https://drive.google.com/uc?export=download&id=${fileId}`);
+                let fetchUrl = '';
+                
+                if (proxy === 'allorigins') {
+                    fetchUrl = `https://api.allorigins.win/get?url=${driveUrl}&disableCache=${Date.now()}`;
+                } else if (proxy === 'corsproxy') {
+                    fetchUrl = `https://corsproxy.io/?https://drive.google.com/uc?export=download&id=${fileId}`;
+                } else {
+                    fetchUrl = `https://drive.google.com/uc?export=download&id=${fileId}`; 
+                }
+
+                consoleOut.innerText += `\n> REQUESTING URL:\n${fetchUrl}\n> WAITING FOR RESPONSE...`;
+
+                const response = await fetch(fetchUrl);
+                
+                let rawDataStr = '';
+                if (proxy === 'allorigins') {
+                    const data = await response.json();
+                    rawDataStr = data.contents;
+                } else {
+                    rawDataStr = await response.text();
+                }
+
+                if (!rawDataStr) throw new Error("Empty contents returned from fetch.");
+
+                consoleOut.innerText += `\n> RESPONSE RECEIVED! Parsing JSON...`;
+                
+                let parsed;
+                try {
+                    parsed = JSON.parse(rawDataStr);
+                } catch (parseError) {
+                    // Deep diagnostic check to tell the user exactly WHY it failed
+                    if (rawDataStr.trim().startsWith('<')) {
+                        throw new Error("PERMISSION DENIED: Google Drive returned an HTML webpage instead of raw JSON data.\n\nFIX: Open your Google Drive file -> Click Share -> Change General Access to 'Anyone with the link'.");
+                    } else {
+                        throw new Error("INVALID JSON FORMAT: The file was successfully downloaded, but the JSON syntax inside the file is broken.\n\nFIX: Ensure there are no missing commas, unescaped quotes, or missing brackets in your file.\nDetails: " + parseError.message);
+                    }
+                }
+                
+                if(parsed.itinerary) {
+                    tempFetchedData = parsed;
+                    applyBtn.classList.remove('hidden');
+                    applyBtn.classList.add('flex');
+                    consoleOut.innerHTML = `> <span class="text-emerald-400">SUCCESS! Valid itinerary data found.</span>\n\n> PARSED JSON PAYLOAD:\n` + JSON.stringify(parsed, null, 2);
+                } else {
+                    consoleOut.innerHTML = `> <span class="text-amber-400">WARNING: JSON is valid, but 'itinerary' root key is missing. Ensure this is the correct app file.</span>\n\n` + JSON.stringify(parsed, null, 2);
+                }
+
+            } catch (e) {
+                consoleOut.innerHTML += `\n\n> <span class="text-rose-400">CRITICAL ERROR:</span>\n${e.message}\n\n> TROUBLESHOOTING:\n1. Ensure the Google Drive file is set to 'Anyone with the link can view'.\n2. The proxy might be blocking the request. Try switching the CORS Proxy Service above.`;
+                console.error(e);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Test Connection';
+            }
+        }
+
+        function applyTestData() {
+            if(!tempFetchedData || !tempFetchedData.itinerary) return;
+            
+            itineraryData = tempFetchedData.itinerary;
+            if(tempFetchedData.completed) completedActivities = tempFetchedData.completed;
+            if(tempFetchedData.saved) savedActivities = tempFetchedData.saved;
+            if(tempFetchedData.notes !== undefined) roughNotes = tempFetchedData.notes;
+            
+            saveData();
+            loadData();
+            switchTab('overview');
+            
+            const indicator = document.getElementById('sync-status');
+            indicator.innerHTML = '<i class="fa-brands fa-google-drive text-blue-500 mr-1.5"></i> Test Data Applied';
+            setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
+        }
+
+        // --- STREAMING_CHUNK:Boot Sequence ---
+        window.onload = () => {
+            loadData(); // Will pull from localStorage or inject defaults
+        };
+
+    </script>
+</body>
+</html>
