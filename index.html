@@ -96,6 +96,12 @@
             border-color: var(--apple-blue); 
             box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15); 
         }
+        
+        /* Mobile UX Enhancements */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .sticky-col { position: sticky; left: 0; z-index: 10; }
     </style>
 </head>
 <body class="pb-28 h-screen overflow-y-auto" id="main-scroll-container">
@@ -114,13 +120,13 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-6">
+    <main class="max-w-7xl mx-auto px-4 pt-6 pb-40">
         
         <!-- View 1: Overview -->
         <div id="view-overview" class="view-section active">
             <div class="mb-6 px-1">
-                <h2 class="text-3xl font-bold tracking-tight text-[#1d1d1f]">Trip Overview</h2>
-                <p class="text-[15px] text-[#86868b] mt-1">Your daily itinerary at a glance.</p>
+                <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#1d1d1f]">Trip Overview</h2>
+                <p class="text-[14px] md:text-[15px] text-[#86868b] mt-1">Your daily itinerary at a glance.</p>
             </div>
             
             <div class="apple-card p-5 mb-8">
@@ -141,7 +147,7 @@
         <!-- View 2: Itinerary -->
         <div id="view-itinerary" class="view-section">
             <div class="sticky top-[60px] z-30 glass-panel pt-3 pb-4 -mx-4 px-4 border-b border-gray-200/50 mb-6 shadow-sm">
-                <div id="day-directory" class="flex gap-2.5 overflow-x-auto custom-scrollbar pb-1 items-center">
+                <div id="day-directory" class="flex gap-2.5 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-1 items-center">
                     <!-- Day Buttons Rendered Here -->
                 </div>
             </div>
@@ -153,8 +159,8 @@
         <!-- View 3: Tasks (Action Req) -->
         <div id="view-tasks" class="view-section">
             <div class="mb-6 px-1">
-                <h2 class="text-3xl font-bold tracking-tight text-[#1d1d1f]">Action Required</h2>
-                <p class="text-[15px] text-[#86868b] mt-1">Bookings, reservations, and follow-ups.</p>
+                <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#1d1d1f]">Action Required</h2>
+                <p class="text-[14px] md:text-[15px] text-[#86868b] mt-1">Bookings, reservations, and follow-ups.</p>
             </div>
             <div id="tasks-container" class="space-y-4">
                 <!-- Task Cards Rendered Here -->
@@ -164,8 +170,8 @@
         <!-- View 4: Saved -->
         <div id="view-saved" class="view-section">
             <div class="mb-6 px-1">
-                <h2 class="text-3xl font-bold tracking-tight text-[#1d1d1f]">Saved</h2>
-                <p class="text-[15px] text-[#86868b] mt-1">Your curated favorite activities.</p>
+                <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#1d1d1f]">Saved</h2>
+                <p class="text-[14px] md:text-[15px] text-[#86868b] mt-1">Your curated favorite activities.</p>
             </div>
             <div id="saved-container" class="space-y-4">
                 <!-- Saved Cards Rendered Here -->
@@ -175,8 +181,8 @@
         <!-- View 5: Notes -->
         <div id="view-notes" class="view-section">
             <div class="mb-6 px-1">
-                <h2 class="text-3xl font-bold tracking-tight text-[#1d1d1f]">Journal & Notes</h2>
-                <p class="text-[15px] text-[#86868b] mt-1">Packing lists, confirmation numbers, and thoughts.</p>
+                <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#1d1d1f]">Journal & Notes</h2>
+                <p class="text-[14px] md:text-[15px] text-[#86868b] mt-1">Packing lists, confirmation numbers, and thoughts.</p>
             </div>
             
             <div class="apple-card overflow-hidden flex flex-col h-[65vh]">
@@ -196,8 +202,8 @@
         <div id="view-edit" class="view-section">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 px-1">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight text-[#1d1d1f]">Edit Itinerary</h2>
-                    <p class="text-[15px] text-[#86868b] mt-1">Tap directly on any text to modify it instantly.</p>
+                    <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#1d1d1f]">Edit Itinerary</h2>
+                    <p class="text-[14px] md:text-[15px] text-[#86868b] mt-1">Tap directly on any text to modify it instantly.</p>
                 </div>
                 <div class="flex gap-2.5 flex-wrap">
                     <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
@@ -221,8 +227,8 @@
         <!-- View 7: Admin -->
         <div id="view-admin" class="view-section">
             <div class="mb-6 px-1">
-                <h2 class="text-3xl font-bold tracking-tight text-[#1d1d1f]">System Status</h2>
-                <p class="text-[15px] text-[#86868b] mt-1">Diagnostics and offline storage.</p>
+                <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#1d1d1f]">System Status</h2>
+                <p class="text-[14px] md:text-[15px] text-[#86868b] mt-1">Diagnostics and offline storage.</p>
             </div>
             
             <div class="apple-card p-6 mb-6">
@@ -1651,11 +1657,11 @@
                                 </span>
                             </div>
                             <h3 class="font-bold text-[#1d1d1f] text-lg leading-tight tracking-tight">${day.title}</h3>
-                        </div>
-                        <div class="p-5 flex-1">
-                            <ul class="space-y-2 mb-2 custom-scrollbar overflow-y-auto max-h-[140px] pr-2">${actHtml}</ul>
-                        </div>
-                        <div class="p-5 bg-[#fafafa] border-t border-gray-100/50 mt-auto rounded-b-[20px]">
+                    </div>
+                    <div class="p-5 flex-1">
+                        <ul class="space-y-2 mb-2 custom-scrollbar overflow-y-auto max-h-[320px] pr-2">${actHtml}</ul>
+                    </div>
+                    <div class="p-5 bg-[#fafafa] border-t border-gray-100/50 mt-auto rounded-b-[20px]">
                             <div class="flex justify-between text-[12px] font-medium text-[#86868b] mb-2.5">
                                 <span><i class="fa-regular fa-clock mr-1.5"></i>${day.totalTime}</span>
                                 <span><i class="fa-solid fa-wallet mr-1.5"></i>${day.totalBudget}</span>
@@ -1677,7 +1683,7 @@
 
             itineraryData.forEach((day, index) => {
                 dirContainer.innerHTML += `
-                    <a href="#${day.dayId}" class="shrink-0 bg-white border border-gray-200 text-[#1d1d1f] text-[12px] font-semibold px-4 py-1.5 rounded-full shadow-sm hover:border-[#0071e3] transition-colors">
+                    <a href="#${day.dayId}" class="shrink-0 snap-start bg-white border border-gray-200 text-[#1d1d1f] text-[12px] font-semibold px-4 py-1.5 rounded-full shadow-sm hover:border-[#0071e3] transition-colors">
                         ${day.dateLabel.split(' • ')[0]}
                     </a>
                 `;
@@ -1849,27 +1855,32 @@
                 let tableHtml = `
                     <div class="apple-card overflow-hidden mb-8 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-gray-200/50">
                         <div class="bg-[#1d1d1f] text-white p-4 flex flex-wrap justify-between items-center gap-3">
-                            <div class="flex items-center gap-2 flex-wrap">
+                            <div class="flex items-center gap-2 flex-wrap w-full md:w-auto flex-1">
                                 <input type="text" value="${day.dateLabel}" onchange="updateDayLabel('${day.dayId}', this.value)" class="bg-[#3c3c43] text-white font-semibold px-2.5 py-1.5 rounded-lg text-[13px] w-28 outline-none focus:ring-2 focus:ring-[#0071e3] transition-all border border-transparent hover:border-gray-500">
                                 <input type="text" value="${day.city || ''}" placeholder="City..." onchange="updateDayCity('${day.dayId}', this.value)" class="bg-[#3c3c43] text-[#34c759] font-bold px-2.5 py-1.5 rounded-lg text-[13px] w-28 outline-none focus:ring-2 focus:ring-[#0071e3] transition-all border border-transparent hover:border-gray-500">
                                 <input type="date" value="${day.rawDate || ''}" onchange="setDayDate('${day.dayId}', this.value)" class="bg-[#3c3c43] text-white text-[12px] px-2.5 py-1.5 rounded-lg outline-none cursor-pointer border border-transparent hover:border-gray-500">
-                                <input type="text" value="${day.title}" onchange="updateDayTitle('${day.dayId}', this.value)" class="bg-transparent text-white font-semibold px-2 py-1 rounded-lg text-[15px] min-w-[180px] outline-none border border-transparent focus:border-gray-500 focus:bg-[#3c3c43] hover:bg-[#3c3c43]">
+                                <input type="text" value="${day.title}" onchange="updateDayTitle('${day.dayId}', this.value)" class="bg-transparent text-white font-semibold px-2 py-1 rounded-lg text-[15px] min-w-[180px] flex-1 outline-none border border-transparent focus:border-gray-500 focus:bg-[#3c3c43] hover:bg-[#3c3c43]">
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end mt-1 md:mt-0">
                                 <span id="edit-totals-${day.dayId}" class="text-[11px] font-semibold text-[#86868b] mr-2 bg-black/40 px-2 py-1 rounded-md">${day.totalTime} | ${day.totalBudget}</span>
-                                <select onchange="mergeDay('${day.dayId}', this.value)" class="bg-[#ff9500] hover:bg-[#e08300] text-white text-[11px] font-bold px-3 py-2 rounded-full outline-none cursor-pointer transition-colors border-none">
-                                    <option value="">Merge into...</option>
-                                    ${mergeOptions}
-                                </select>
-                                <button onclick="addActivity('${day.dayId}')" class="bg-[#0071e3] hover:bg-[#0077ed] text-white text-[11px] font-bold px-3 py-2 rounded-full transition-colors flex items-center"><i class="fa-solid fa-plus mr-1"></i>Row</button>
-                                <button onclick="deleteDay('${day.dayId}')" class="bg-[#ff3b30]/10 text-[#ff3b30] hover:bg-[#ff3b30]/20 p-2 rounded-full transition-colors flex items-center justify-center w-[30px] h-[30px]" title="Delete Day"><i class="fa-solid fa-trash-can text-[12px]"></i></button>
+                                <div class="flex gap-2">
+                                    <select onchange="mergeDay('${day.dayId}', this.value)" class="bg-[#ff9500] hover:bg-[#e08300] text-white text-[11px] font-bold px-3 py-2 rounded-full outline-none cursor-pointer transition-colors border-none">
+                                        <option value="">Merge...</option>
+                                        ${mergeOptions}
+                                    </select>
+                                    <button onclick="addActivity('${day.dayId}')" class="bg-[#0071e3] hover:bg-[#0077ed] text-white text-[11px] font-bold px-3 py-2 rounded-full transition-colors flex items-center"><i class="fa-solid fa-plus mr-1"></i>Row</button>
+                                    <button onclick="deleteDay('${day.dayId}')" class="bg-[#ff3b30]/10 text-[#ff3b30] hover:bg-[#ff3b30]/20 p-2 rounded-full transition-colors flex items-center justify-center w-[30px] h-[30px]" title="Delete Day"><i class="fa-solid fa-trash-can text-[12px]"></i></button>
+                                </div>
                             </div>
                         </div>
-                        <div class="overflow-x-auto custom-scrollbar">
+                        <div class="p-2 md:hidden bg-[#f5f5f7] border-b border-gray-200/80 text-[11px] text-[#86868b] flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrows-left-right"></i> Swipe table horizontally to edit all fields
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar relative">
                             <table class="w-full text-left border-collapse min-w-[950px]">
                                 <thead>
                                     <tr class="bg-[#f5f5f7] border-b border-gray-200/80 text-[10px] font-semibold uppercase tracking-wider text-[#86868b]">
-                                        <th class="p-2.5 w-10 text-center"></th>
+                                        <th class="p-2.5 w-10 text-center sticky-col bg-[#f5f5f7] shadow-[2px_0_4px_rgba(0,0,0,0.03)] border-r border-gray-200/50 z-10"></th>
                                         <th class="p-2.5 w-[20%]">Place</th>
                                         <th class="p-2.5 w-[20%]">Activity</th>
                                         <th class="p-2.5 w-24">Time</th>
@@ -1884,8 +1895,8 @@
 
                 day.activities.forEach((act) => {
                     tableHtml += `
-                        <tr class="border-b border-gray-100/60 hover:bg-[#f9f9f9] transition-colors group">
-                            <td class="p-1.5 text-center">
+                        <tr class="border-b border-gray-100/60 hover:bg-[#f9f9f9] transition-colors group bg-white">
+                            <td class="p-1.5 text-center sticky-col bg-white group-hover:bg-[#f9f9f9] shadow-[2px_0_4px_rgba(0,0,0,0.03)] border-r border-gray-100/60 transition-colors z-10">
                                 <button onclick="openDeleteModal('${day.dayId}', '${act.id}')" class="text-gray-300 group-hover:text-[#ff3b30] p-1.5 rounded-full hover:bg-[#ff3b30]/10 transition-all tactile-btn"><i class="fa-solid fa-circle-minus text-[14px]"></i></button>
                             </td>
                             <td class="p-1.5"><input type="text" value="${act.place}" class="edit-input font-medium" onchange="updateActivity('${day.dayId}', '${act.id}', 'place', this.value)"></td>
