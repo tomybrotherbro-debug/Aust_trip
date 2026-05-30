@@ -34,7 +34,7 @@
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <h1 class="text-xl font-extrabold text-sky-800 tracking-tight"><i class="fa-solid fa-plane-departure mr-2"></i>Australia Trip</h1>
             <div class="flex items-center gap-3">
-                <div id="sync-status" class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full flex items-center border border-gray-200 shadow-sm">
+                <div id="sync-status" class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full flex items-center border border-gray-200 shadow-sm transition-all">
                     <i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save
                 </div>
                 <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn text-gray-400 hover:text-slate-700 transition-colors" title="Admin Tools"><i class="fa-solid fa-gear"></i></button>
@@ -130,7 +130,10 @@
                     <p class="text-sm text-gray-500 mt-1">Click any text in the table below to edit instantly.</p>
                 </div>
                 <div class="flex gap-2 flex-wrap">
-                    <button onclick="importFromGitHub()" id="github-sync-btn" class="text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-2 rounded-md border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm flex items-center"><i class="fa-brands fa-github mr-1.5 text-sm"></i> Sync GitHub</button>
+                    <div class="flex bg-slate-100 rounded-md border border-slate-300 shadow-sm overflow-hidden">
+                        <button onclick="importFromGitHub()" id="github-sync-btn" class="text-[10px] font-bold uppercase tracking-wider text-slate-700 px-3 py-2 hover:bg-slate-200 transition-colors border-r border-slate-300 flex items-center" title="Pull latest from GitHub"><i class="fa-solid fa-cloud-arrow-down mr-1.5 text-sm"></i> Pull</button>
+                        <button onclick="pushToGitHub(false)" id="github-push-btn" class="text-[10px] font-bold uppercase tracking-wider text-slate-700 px-3 py-2 hover:bg-slate-200 transition-colors flex items-center" title="Force Push changes to GitHub"><i class="fa-solid fa-cloud-arrow-up mr-1.5 text-sm"></i> Push</button>
+                    </div>
                     <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
                     <button onclick="document.getElementById('import-file').click()" class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-2 rounded-md border border-indigo-200 hover:bg-indigo-100 transition-colors shadow-sm flex items-center"><i class="fa-solid fa-upload mr-1.5 text-sm"></i> Import</button>
                     <button onclick="exportData()" class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-2 rounded-md border border-emerald-200 hover:bg-emerald-100 transition-colors shadow-sm flex items-center"><i class="fa-solid fa-download mr-1.5 text-sm"></i> Backup</button>
@@ -151,13 +154,24 @@
             </div>
             
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
-                <h3 class="text-md font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">GitHub Sync Tester</h3>
+                <h3 class="text-md font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">GitHub Auto-Sync Setup</h3>
+                <div class="space-y-4 mb-4">
+                    <p class="text-xs text-gray-500">To enable background auto-sync, enter your GitHub Personal Access Token (PAT) with <strong>repo</strong> permissions. It will push to <code class="bg-gray-100 px-1 py-0.5 rounded">tomybrotherbro-debug/Aust_trip</code>.</p>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">GitHub Personal Access Token</label>
+                        <input type="password" id="github-pat-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all shadow-inner">
+                    </div>
+                    <button onclick="saveGitHubToken()" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-xs shadow-sm"><i class="fa-solid fa-key mr-1.5"></i> Save Token & Enable Auto-Sync</button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
+                <h3 class="text-md font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">GitHub URL Diagnostics</h3>
                 
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">GitHub File Link</label>
-                        <input type="text" id="admin-github-url" placeholder="Paste GitHub file link here..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all shadow-inner">
-                        <p class="text-[10px] text-gray-500 mt-1.5 italic"><i class="fa-solid fa-circle-info mr-1"></i>Paste the standard GitHub link or the raw.githubusercontent link.</p>
+                        <input type="text" id="admin-github-url" placeholder="Paste GitHub file link here..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all shadow-inner" value="https://github.com/tomybrotherbro-debug/Aust_trip/blob/main/australia_trip_backup.json">
                     </div>
                     
                     <div>
@@ -224,127 +238,6 @@
     </nav>
 
     <script>
-        // --- DEFAULT DATA (15 Days) ---
-        const defaultItinerary = [
-            { dayId: 'day_1', day: 1, dateLabel: 'Day 1', title: 'Arrival & Iconic Harbourside', activities: [
-                { id: '1_1', place: 'Circular Quay', activity: 'Breakfast & Harbour Views', time: '1 hr', food: 'Flat White Coffee', budget: '$15–25', action: '', comments: '' },
-                { id: '1_2', place: 'Sydney Opera House', activity: 'Guided Tour', time: '1.5 hrs', food: '', budget: '$43', action: 'Book Tickets', comments: 'Check tour times online' },
-                { id: '1_3', place: 'Sydney Opera House', activity: 'Forecourt & Photos', time: '0.5 hr', food: '', budget: 'Free', action: '', comments: '' },
-                { id: '1_4', place: 'Royal Botanic Garden Sydney', activity: 'Garden Walk & Lookouts', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Walk to Mrs Macquaries Chair' },
-                { id: '1_5', place: 'Circular Quay', activity: 'Lunch', time: '1 hr', food: 'Fish & Chips', budget: '$20–35', action: '', comments: '' },
-                { id: '1_6', place: 'Museum of Contemporary Art Australia', activity: 'Museum Visit', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' },
-                { id: '1_7', place: 'Sydney CBD', activity: 'Vivid Sydney (Seasonal)', time: '3 hrs', food: 'Australian Steak', budget: '$0–40', action: '', comments: '' }
-            ]},
-            { dayId: 'day_2', day: 2, dateLabel: 'Day 2', title: 'History & Harbour Cruising', activities: [
-                { id: '2_1', place: 'The Rocks', activity: 'Historic Walking Tour', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' },
-                { id: '2_2', place: 'The Rocks', activity: 'Markets & Exploration', time: '1 hr', food: 'Meat Pie', budget: '$10–20', action: '', comments: 'Weekends only for markets' },
-                { id: '2_3', place: 'The Rocks', activity: 'Lunch', time: '1 hr', food: 'Barramundi', budget: '$20–35', action: '', comments: '' },
-                { id: '2_4', place: 'Australian National Maritime Museum', activity: 'Museum Visit', time: '3 hrs', food: '', budget: '$35–45', action: '', comments: '' },
-                { id: '2_5', place: 'Darling Harbour', activity: 'Waterfront Walk', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' },
-                { id: '2_6', place: 'Sydney Harbour', activity: 'Sunset Cruise', time: '1.5 hrs', food: '', budget: '$40–70', action: 'Reserve Boat', comments: 'Leaves near Aquarium' },
-                { id: '2_7', place: 'Darling Harbour', activity: 'Fireworks (Selected Days)', time: '0.5 hr', food: 'Lamington', budget: '$5–10', action: '', comments: 'Usually Saturdays' }
-            ]},
-            { dayId: 'day_3', day: 3, dateLabel: 'Day 3', title: 'Bondi & Coastal Beaches', activities: [
-                { id: '3_1', place: 'Bondi Beach', activity: 'Swimming & Beach Time', time: '2 hrs', food: 'Acai Bowl', budget: '$15–20', action: '', comments: 'Bring sunscreen' },
-                { id: '3_2', place: 'Bondi to Coogee Walk', activity: 'Coastal Walk', time: '3 hrs', food: '', budget: 'Free', action: '', comments: 'Wear good walking shoes' },
-                { id: '3_3', place: 'Coogee Beach', activity: 'Lunch', time: '1 hr', food: 'Fish Tacos', budget: '$20–30', action: '', comments: 'Coogee Pavilion is great' },
-                { id: '3_4', place: 'Coogee Beach', activity: 'Relaxation', time: '3 hrs', food: 'Fresh Oysters', budget: '$20–40', action: '', comments: '' }
-            ]},
-            { dayId: 'day_4', day: 4, dateLabel: 'Day 4', title: 'Blue Mountains Excursion', activities: [
-                { id: '4_1', place: 'Blue Mountains', activity: 'Travel from Sydney', time: '2 hrs', food: '', budget: 'Included', action: 'Train Pass', comments: 'Central Station to Katoomba' },
-                { id: '4_2', place: 'Three Sisters', activity: 'Lookout & Photography', time: '1 hr', food: '', budget: 'Included', action: '', comments: 'Echo Point' },
-                { id: '4_3', place: 'Blue Mountains', activity: 'Waterfall Tour', time: '2 hrs', food: '', budget: 'Included', action: '', comments: 'Leura Cascades' },
-                { id: '4_4', place: 'Blue Mountains', activity: 'Lunch', time: '1 hr', food: 'Leura Bakery Pie', budget: 'Included', action: '', comments: '' },
-                { id: '4_5', place: 'Scenic World', activity: 'Railway & Cableway', time: '2 hrs', food: '', budget: 'Included', action: 'Book Pass', comments: 'Steepest railway in world' },
-                { id: '4_6', place: 'Blue Mountains', activity: 'Bushwalks', time: '2 hrs', food: 'Aussie Burger', budget: '$20–30', action: '', comments: '' },
-                { id: '4_7', place: 'Blue Mountains', activity: 'Return Travel', time: '2 hrs', food: '', budget: 'Included', action: '', comments: '' }
-            ]},
-            { dayId: 'day_5', day: 5, dateLabel: 'Day 5', title: 'Wildlife & Waterfront', activities: [
-                { id: '5_1', place: 'Taronga Ferry', activity: 'Ferry Ride', time: '0.5 hr', food: '', budget: 'Included', action: '', comments: 'Departs Circular Quay' },
-                { id: '5_2', place: 'Taronga Zoo Sydney', activity: 'Zoo Visit', time: '6 hrs', food: '', budget: '$50–70', action: 'Buy Entry', comments: '' },
-                { id: '5_3', place: 'Taronga Ferry', activity: 'Return Ferry', time: '0.5 hr', food: '', budget: 'Included', action: '', comments: '' },
-                { id: '5_4', place: 'Darling Harbour', activity: 'Evening Walk', time: '2 hrs', food: 'Pavlova', budget: '$10–15', action: '', comments: '' },
-                { id: '5_5', place: 'Darling Harbour', activity: 'Dinner', time: '2 hrs', food: 'Kangaroo Steak', budget: '$30–50', action: 'Reserve Table', comments: 'Meat District Co.' }
-            ]},
-            { dayId: 'day_6', day: 6, dateLabel: 'Day 6', title: 'Marine Life & Seafood', activities: [
-                { id: '6_1', place: 'Sydney Harbour', activity: 'Whale Watching Cruise', time: '3 hrs', food: '', budget: '$70–120', action: 'Book Boat', comments: 'Seasonal (May-Nov)' },
-                { id: '6_2', place: 'Sydney Fish Market', activity: 'Seafood Lunch', time: '1.5 hrs', food: 'Lobster, Prawns', budget: '$30–60', action: '', comments: 'Get there early for best pick' },
-                { id: '6_3', place: 'Harbour Foreshore', activity: 'Walking', time: '3 hrs', food: '', budget: 'Free', action: '', comments: '' },
-                { id: '6_4', place: 'Darling Harbour', activity: 'Relaxation', time: '2 hrs', food: 'Oysters', budget: '$20–30', action: '', comments: '' }
-            ]},
-            { dayId: 'day_7', day: 7, dateLabel: 'Day 7', title: 'Manly Beach Day', activities: [
-                { id: '7_1', place: 'Manly Ferry', activity: 'Ferry Ride (Round Trip)', time: '1 hr', food: '', budget: '$15–20', action: '', comments: 'Tap on with credit card' },
-                { id: '7_2', place: 'Manly Beach', activity: 'Beach Time', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: '' },
-                { id: '7_3', place: 'Shelly Beach', activity: 'Coastal Walk & Snorkelling', time: '2 hrs', food: '', budget: '$30–80', action: '', comments: 'Wetsuit required in winter' },
-                { id: '7_4', place: 'Manly', activity: 'Lunch', time: '1 hr', food: 'Fish Burger', budget: '$20–30', action: '', comments: '' },
-                { id: '7_5', place: 'Manly Corso', activity: 'Explore Area', time: '3 hrs', food: 'Gelato', budget: '$10', action: '', comments: '' }
-            ]},
-            { dayId: 'day_8', day: 8, dateLabel: 'Day 8', title: 'Watsons Bay & Lighthouses', activities: [
-                { id: '8_1', place: 'Watsons Bay', activity: 'Harbour Exploration', time: '2 hrs', food: 'Fish & Chips', budget: '$20–30', action: '', comments: 'Doyles on the Beach' },
-                { id: '8_2', place: 'South Head', activity: 'Coastal Walk', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Gap Bluff' },
-                { id: '8_3', place: 'Hornby Lighthouse', activity: 'Photography', time: '1 hr', food: '', budget: 'Free', action: '', comments: 'Iconic red and white stripes' },
-                { id: '8_4', place: 'Coastal Cliffs', activity: 'Relaxation', time: '2 hrs', food: '', budget: 'Free', action: '', comments: '' }
-            ]},
-            { dayId: 'day_9', day: 9, dateLabel: 'Day 9', title: 'CBD Shopping & Culture', activities: [
-                { id: '9_1', place: 'Queen Victoria Building', activity: 'Shopping & Architecture', time: '3 hrs', food: '', budget: 'Variable', action: '', comments: 'Look at the Royal Clock' },
-                { id: '9_2', place: 'Sydney CBD', activity: 'Lunch', time: '1 hr', food: 'Australian Chocolates', budget: '$20–30', action: '', comments: 'Haighs Chocolates' },
-                { id: '9_3', place: 'Pitt Street Mall', activity: 'Shopping', time: '4 hrs', food: '', budget: 'Variable', action: '', comments: '' },
-                { id: '9_4', place: 'Sydney CBD', activity: 'Theatre / Concert', time: '3 hrs', food: '', budget: '$50–200', action: 'Buy Tickets', comments: 'State Theatre or Capitol' }
-            ]},
-            { dayId: 'day_10', day: 10, dateLabel: 'Day 10', title: 'Bridge Climb & Barangaroo', activities: [
-                { id: '10_1', place: 'Sydney Harbour Bridge', activity: 'BridgeClimb', time: '4 hrs', food: '', budget: '$250–400', action: 'Book Climb', comments: 'Must book well in advance' },
-                { id: '10_2', place: 'The Rocks', activity: 'Lunch', time: '1.5 hrs', food: 'Wagyu Steak', budget: '$30–60', action: '', comments: 'Celebrate the climb!' },
-                { id: '10_3', place: 'Observatory Hill', activity: 'Relaxation & Views', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Great spot to rest legs' },
-                { id: '10_4', place: 'Barangaroo Reserve', activity: 'Twilight Harbour Walk', time: '2.5 hrs', food: 'Wine & Tapas', budget: '$20–40', action: '', comments: 'Beautiful modern precinct' }
-            ]},
-            { dayId: 'day_11', day: 11, dateLabel: 'Day 11', title: 'Cockatoo Island Heritage', activities: [
-                { id: '11_1', place: 'Cockatoo Island', activity: 'Ferry Transfer', time: '0.5 hr', food: '', budget: '$10', action: '', comments: '' },
-                { id: '11_2', place: 'Cockatoo Island', activity: 'Heritage Tour', time: '3.5 hrs', food: '', budget: 'Free', action: '', comments: 'Old convict and naval shipyard' },
-                { id: '11_3', place: 'Cockatoo Island', activity: 'Lunch', time: '1 hr', food: 'Café Meals', budget: '$20–30', action: '', comments: '' },
-                { id: '11_4', place: 'Cockatoo Island', activity: 'Exploration & Photography', time: '3 hrs', food: '', budget: 'Free', action: '', comments: 'Industrial ruins are great for photos' }
-            ]},
-            { dayId: 'day_12', day: 12, dateLabel: 'Day 12', title: 'Shark Island Picnic', activities: [
-                { id: '12_1', place: 'Shark Island', activity: 'Ferry Transfers', time: '1 hr', food: '', budget: '$10–15', action: 'Book Ferry', comments: 'Requires specific Captain Cook ferry' },
-                { id: '12_2', place: 'Shark Island', activity: 'Picnic & Harbour Views', time: '4 hrs', food: 'Picnic Lunch', budget: '$15–30', action: 'Pack Food', comments: 'No shops on island' },
-                { id: '12_3', place: 'Shark Island', activity: 'Walking & Relaxation', time: '2 hrs', food: '', budget: 'Free', action: '', comments: 'Explore the grottos' }
-            ]},
-            { dayId: 'day_13', day: 13, dateLabel: 'Day 13', title: 'Hunter Valley Wine Region', activities: [
-                { id: '13_1', place: 'Sydney to Hunter Valley', activity: 'Travel', time: '2.5 hrs', food: '', budget: 'Included', action: 'Rent Car / Tour', comments: 'Drive north' },
-                { id: '13_2', place: 'Hunter Valley', activity: 'Wine Tasting & Vineyards', time: '3 hrs', food: '', budget: '$40–80', action: 'Book Tasting', comments: 'Shiraz and Semillon' },
-                { id: '13_3', place: 'Hunter Valley', activity: 'Lunch', time: '1.5 hrs', food: 'Estate Lunch', budget: '$30–60', action: '', comments: '' },
-                { id: '13_4', place: 'Hunter Valley Gardens', activity: 'Explore Gardens', time: '2 hrs', food: '', budget: '$35', action: '', comments: '' },
-                { id: '13_5', place: 'Hunter Valley to Sydney', activity: 'Return Travel', time: '2.5 hrs', food: '', budget: 'Included', action: '', comments: '' }
-            ]},
-            { dayId: 'day_14', day: 14, dateLabel: 'Day 14', title: 'Skydiving Adventure', activities: [
-                { id: '14_1', place: 'Wollongong Dropzone', activity: 'Check-in & Briefing', time: '2 hrs', food: '', budget: 'Included', action: 'Confirm Time', comments: 'Skydive Sydney-Wollongong' },
-                { id: '14_2', place: 'Wollongong', activity: 'Tandem Jump', time: '1 hr', food: '', budget: '$300–450', action: '', comments: 'Beach landing!' },
-                { id: '14_3', place: 'Skydiving Centre', activity: 'Photos & Videos', time: '1 hr', food: '', budget: 'Optional', action: '', comments: '' },
-                { id: '14_4', place: 'Wollongong', activity: 'Weather Buffer Time', time: '2 hrs', food: '', budget: 'Included', action: '', comments: 'Jumps delayed by wind' },
-                { id: '14_5', place: 'Return to Sydney', activity: 'Travel', time: '2 hrs', food: 'Beach Café', budget: '$20–30', action: '', comments: '' }
-            ]},
-            { dayId: 'day_15', day: 15, dateLabel: 'Day 15', title: 'Farewell Sydney', activities: [
-                { id: '15_1', place: 'Flexible Buffer', activity: 'Missed Activities', time: '3 hrs', food: 'Favourite Food', budget: 'Variable', action: '', comments: 'Catch up on anything missed' },
-                { id: '15_2', place: 'Sydney CBD', activity: 'Souvenir Shopping', time: '2 hrs', food: '', budget: 'Variable', action: '', comments: 'Paddys Market' },
-                { id: '15_3', place: 'Beach or Harbour', activity: 'Final Relaxation', time: '3 hrs', food: '', budget: '$20–50', action: '', comments: 'Enjoy the final sunset' }
-            ]},
-            { dayId: 'day_16', day: 16, dateLabel: 'Day 16', city: 'Melbourne', title: 'Melbourne\'s Soul', activities: [
-                { id: '16_1', place: 'Melbourne CBD', activity: 'Slow Breakfast & Coffee', time: '2 hrs', food: 'Flat White', budget: '$15–25', action: '', comments: 'Start at a classic café. Bring a notebook. Settle into the pace.' },
-                { id: '16_2', place: 'State Library Victoria', activity: 'Domed Reading Room', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: 'Spend time reflecting beneath the iconic dome.' },
-                { id: '16_3', place: 'Melbourne Laneways', activity: 'Laneway Wandering (Degraves St, Centre Pl)', time: '1.5 hrs', food: 'Laneway Lunch', budget: '$20–40', action: '', comments: 'Discover details rather than rushing.' },
-                { id: '16_4', place: 'Royal Botanic Gardens Victoria', activity: 'Afternoon Walk', time: '3.5 hrs', food: 'Coffee', budget: 'Free', action: '', comments: 'Notice old trees, birds, people. Doing nothing is meaningful.' },
-                { id: '16_5', place: 'Yarra River', activity: 'Sunset Walk', time: '1.5 hrs', food: '', budget: 'Free', action: '', comments: 'Watch the evening light reflecting on the water.' },
-                { id: '16_6', place: 'Hidden Laneway Bar', activity: 'Dinner & Drinks', time: '2 hrs', food: 'Restaurant Meal', budget: '$40–80', action: 'Find Bar', comments: 'Melbourne reveals itself best after dark.' }
-            ]},
-            { dayId: 'day_17', day: 17, dateLabel: 'Day 17', city: 'Melbourne', title: 'Art, Coastline & Reflection', activities: [
-                { id: '17_1', place: 'Fitzroy / Carlton', activity: 'Coffee & Journaling', time: '2 hrs', food: 'Café Breakfast', budget: '$10–20', action: '', comments: 'Find a quiet neighbourhood café to write or read.' },
-                { id: '17_2', place: 'Hosier Lane', activity: 'Street Art & Reflections', time: '1.5 hrs', food: '', budget: 'Free', action: '', comments: 'Cinematic atmosphere, especially after rain.' },
-                { id: '17_3', place: 'Federation Square & NGV', activity: 'Gallery Visit', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: 'Experience Melbourne\'s creative identity.' },
-                { id: '17_4', place: 'Brighton Beach', activity: 'Slow Shoreline Walk', time: '2.5 hrs', food: '', budget: '$10', action: '', comments: 'Take the tram. Embrace the melancholic, windy atmosphere.' },
-                { id: '17_5', place: 'Brighton Bathing Boxes', activity: 'Sunset Viewing', time: '2.5 hrs', food: '', budget: 'Free', action: '', comments: 'Iconic colorful boxes and changing sea light.' },
-                { id: '17_6', place: 'Melbourne CBD', activity: 'Final Evening Walk', time: '2 hrs', food: 'Late Dinner', budget: '$20–40', action: '', comments: 'Aimless walk. No destination. Just wander.' }
-            ]}
-        ];
-
         // --- APP STATE ---
         let itineraryData = [];
         let completedActivities = [];
@@ -357,34 +250,11 @@
 
         // --- STREAMING_CHUNK:Load & Sync Logic ---
         function loadData() {
-            // CRITICAL FIX: Always pull from Local Storage FIRST to preserve user edits between code updates.
             const localData = localStorage.getItem('sydneyCustomData');
-            
-            // Apply default city to base template
-            defaultItinerary.forEach(d => { if(!d.city) d.city = 'Sydney'; });
 
             if (localData) {
-                console.log("Found local user data. Loading custom edits.");
+                console.log("Loading user data.");
                 itineraryData = JSON.parse(localData);
-                
-                // Smart Migration: Backfill city and automatically append new Melbourne days
-                let needsSave = false;
-                itineraryData.forEach(d => { 
-                    if(!d.city) { d.city = 'Sydney'; needsSave = true; } 
-                });
-                
-                const hasMelbourne = itineraryData.some(d => d.city === 'Melbourne');
-                if (!hasMelbourne) {
-                    const melbourneDays = defaultItinerary.filter(d => d.city === 'Melbourne');
-                    itineraryData.push(...melbourneDays);
-                    needsSave = true;
-                }
-                
-                if(needsSave) saveData();
-
-            } else {
-                console.log("No local data found. Loading default template.");
-                itineraryData = JSON.parse(JSON.stringify(defaultItinerary));
             }
             
             completedActivities = JSON.parse(localStorage.getItem('sydneyCompleted')) || [];
@@ -393,10 +263,10 @@
             
             document.getElementById('notes-editor').innerHTML = roughNotes;
             
-            // Recalculate dynamic times and budgets to ensure accuracy
             recalculateAllTotals();
+            sortItinerary();
             
-            // Render UI
+            // Initial Render UI
             renderOverview();
             renderItinerary();
             renderDirectory();
@@ -406,17 +276,36 @@
             updateProgress();
         }
 
-        function saveData() {
+        // --- THE AUTO-PUSH ENGINE ---
+        let githubPushTimeout = null;
+
+        function scheduleAutoPush() {
+            const token = localStorage.getItem('github_pat');
+            if (!token) return; // Do nothing if token is not set
+
+            const indicator = document.getElementById('sync-status');
+            indicator.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-amber-500 mr-1.5"></i> Pending Cloud Sync...';
+
+            clearTimeout(githubPushTimeout);
+            // Wait 5 seconds after the user stops typing/editing to push to GitHub
+            githubPushTimeout = setTimeout(() => {
+                pushToGitHub(true); // Silent push
+            }, 5000); 
+        }
+
+        function saveData(skipPush = false) {
             localStorage.setItem('sydneyCustomData', JSON.stringify(itineraryData));
             localStorage.setItem('sydneyCompleted', JSON.stringify(completedActivities));
             localStorage.setItem('sydneySaved', JSON.stringify(savedActivities));
             
-            // Flash save indicator
+            // Update local save UI safely before auto-push kicks in
             const indicator = document.getElementById('sync-status');
-            indicator.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-sky-500 mr-1.5"></i> Saved';
-            setTimeout(() => {
-                indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save';
-            }, 1500);
+            if(indicator) indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save';
+
+            // Trigger debounced cloud push ONLY if we didn't just pull from the cloud
+            if (!skipPush) {
+                scheduleAutoPush();
+            }
         }
 
         // --- STREAMING_CHUNK:Math & Formatting Helpers ---
@@ -457,7 +346,7 @@
                             validBudget = true;
                         } else if (nums && nums.length > 1) {
                             bMin += parseInt(nums[0], 10);
-                            bMax += parseInt(nums[1], 10); // Fallback for things like "$10 to $20"
+                            bMax += parseInt(nums[1], 10); 
                             validBudget = true;
                         }
                     }
@@ -473,7 +362,6 @@
         }
 
         function backgroundSync() {
-            // Live-syncs all views in the background without stealing focus from the Edit inputs
             renderOverview();
             renderItinerary();
             renderDirectory();
@@ -489,9 +377,8 @@
                 if (timeA !== timeB) {
                     return timeA - timeB;
                 }
-                return a.day - b.day; // Fallback to day number order if dates match or are missing
+                return a.day - b.day;
             });
-            // Re-sequence day numbers after sort
             itineraryData.forEach((d, i) => d.day = i + 1);
         }
 
@@ -516,20 +403,16 @@
 
         // --- STREAMING_CHUNK:Core UI Functions ---
         function switchTab(tabId) {
-            // Save scroll position for current tab
             scrollPositions[currentTab] = window.scrollY;
 
-            // Hide all tabs
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => {
                 el.classList.remove('text-sky-600', 'active');
                 el.classList.add('text-gray-400');
             });
 
-            // Show selected tab
             document.getElementById(`view-${tabId}`).classList.add('active');
             
-            // Safely toggle nav button colors (prevents errors if button is missing)
             const navBtn = document.getElementById(`nav-${tabId}`);
             if(navBtn) {
                 navBtn.classList.remove('text-gray-400');
@@ -537,8 +420,6 @@
             }
 
             currentTab = tabId;
-
-            // Restore scroll position
             window.scrollTo(0, scrollPositions[tabId] || 0);
         }
 
@@ -571,7 +452,6 @@
             saveData();
             updateProgress();
             
-            // Re-render UI to strike-through text
             if(currentTab === 'overview') renderOverview();
             if(currentTab === 'itinerary') renderItinerary();
             if(currentTab === 'tasks') renderTasks();
@@ -595,7 +475,6 @@
         function scrollToDay(dayIdStr) {
             const el = document.getElementById(`day-header-${dayIdStr}`);
             if (el) {
-                // Adjust for sticky headers
                 const y = el.getBoundingClientRect().top + window.pageYOffset - 110;
                 window.scrollTo({top: y, behavior: 'smooth'});
             }
@@ -615,7 +494,7 @@
                 
                 const listHTML = dayActs.map(act => {
                     const isDone = completedActivities.includes(act.id);
-                    return `<li class="text-[11px] flex items-center mb-1.5 overflow-hidden ${isDone ? 'line-through text-gray-400' : 'text-gray-600'}">
+                    return `<li class="text-[11px] flex items-center mb-1.5 overflow-hidden ${isDone ? 'line-through text-gray-400' : 'text-gray-600'} group-hover:text-gray-800 transition-colors" title="${act.place}: ${act.activity}">
                                 <span class="mr-1.5 shrink-0">${getEmoji(act.activity, act.place)}</span> 
                                 <span class="truncate"><strong>${act.place}:</strong> ${act.activity}</span>
                             </li>`;
@@ -655,14 +534,12 @@
                 btn.onclick = () => scrollToDay(day.dayId);
                 btn.className = 'whitespace-nowrap flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-white border border-gray-200 text-gray-600 hover:bg-sky-50 hover:text-sky-700 shadow-sm';
                 
-                // Shorten name if too long
                 let shortName = day.dateLabel.length > 10 ? `<span class="truncate max-w-[80px] inline-block align-bottom">${day.dateLabel}</span>` : day.dateLabel;
                 btn.innerHTML = shortName;
                 dirContainer.appendChild(btn);
             });
         }
 
-        // Shared Activity Card Generator
         function generateActivityHTML(act, dayContext = '') {
             const isChecked = completedActivities.includes(act.id) ? 'checked' : '';
             const isSaved = savedActivities.includes(act.id);
@@ -762,17 +639,13 @@
 
         // --- STREAMING_CHUNK:Notes Editor Logic ---
         let notesTimeout;
-        function saveNotes() {
+        function saveNotes(skipPush = false) {
             clearTimeout(notesTimeout);
             notesTimeout = setTimeout(() => {
                 roughNotes = document.getElementById('notes-editor').innerHTML;
                 localStorage.setItem('sydneyNotes', roughNotes);
-                
-                // Flash status
-                const indicator = document.getElementById('sync-status');
-                indicator.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-purple-500 mr-1.5"></i> Notes Saved';
-                setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 1000);
-            }, 800); // 800ms debounce
+                if (!skipPush) scheduleAutoPush(); 
+            }, 800);
         }
         function formatNote(command) {
             document.execCommand(command, false, null);
@@ -824,7 +697,6 @@
                 dayCard.innerHTML = `
                     <div class="bg-slate-800 px-4 py-2.5 flex flex-col sm:flex-row justify-between sm:items-center text-white gap-3">
                         <div class="flex gap-2 items-center flex-wrap">
-                            <!-- Custom Date Picker -->
                             <div class="relative w-8 h-8 rounded bg-slate-700 hover:bg-slate-600 transition flex items-center justify-center cursor-pointer border border-slate-600" title="Set specific date">
                                 <i class="fa-regular fa-calendar text-xs text-sky-400"></i>
                                 <input type="date" value="${dayData.rawDate || ''}" onchange="setDate('${dayIdStr}', this.value)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
@@ -877,11 +749,9 @@
             
             itineraryData[dayIndex].activities[actIndex][field] = value.trim();
             
-            if (field === 'time' || field === 'budget') {
-                recalculateAllTotals();
-            }
+            if (field === 'time' || field === 'budget') recalculateAllTotals();
             saveData();
-            backgroundSync(); // Instantly push text/number changes to other tabs
+            backgroundSync();
         }
 
         function inlineAdd(dayIdStr) {
@@ -889,12 +759,11 @@
             if (dayIndex === -1) return;
 
             const newId = 'c_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
-            itineraryData[dayIndex].activities.push({
-                id: newId, place: '', activity: '', time: '', food: '', budget: '', action: '', comments: ''
-            });
+            itineraryData[dayIndex].activities.push({ id: newId, place: '', activity: '', time: '', food: '', budget: '', action: '', comments: '' });
+            
             saveData();
-            renderEditView(); // Re-render edit view to show the new empty row
-            backgroundSync(); // Push updates everywhere
+            renderEditView();
+            backgroundSync();
         }
 
         function updateHeader(dayIdStr, field, value) {
@@ -912,17 +781,16 @@
             if (dayIndex === -1) return;
             
             const d = new Date(dateStr);
-            // Fix timezone shift naturally
             const localDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
-            
             const formatted = localDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            
             itineraryData[dayIndex].dateLabel = formatted;
             itineraryData[dayIndex].rawDate = dateStr;
             
-            sortItinerary(); // Instantly sort into correct ascending chronological order
+            sortItinerary();
             saveData();
-            renderEditView(); // Required to physically move the tables around
-            backgroundSync(); // Updates overview/itinerary to match new order
+            renderEditView();
+            backgroundSync();
         }
 
         function mergeDay(fromDayId, toDayId) {
@@ -932,15 +800,13 @@
             const toIndex = itineraryData.findIndex(d => d.dayId === toDayId);
             if (fromIndex === -1 || toIndex === -1) return;
             
-            // Move activities
             itineraryData[toIndex].activities = itineraryData[toIndex].activities.concat(itineraryData[fromIndex].activities);
-            // Delete old day
             itineraryData.splice(fromIndex, 1);
             
             recalculateAllTotals();
             saveData();
             renderEditView();
-            backgroundSync(); // Live sync merged values
+            backgroundSync();
         }
 
         function addNewDay() {
@@ -960,7 +826,6 @@
             setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
         }
 
-        // --- STREAMING_CHUNK:Delete Modal Logic ---
         function openDeleteModal(dayIdStr, actIndex) {
             activityToDelete = { dayIdStr, actIndex };
             document.getElementById('delete-modal').classList.remove('hidden');
@@ -978,8 +843,6 @@
             const dayIndex = itineraryData.findIndex(d => d.dayId === dayIdStr);
             if (dayIndex !== -1) {
                 const deletedId = itineraryData[dayIndex].activities[actIndex].id;
-                
-                // Remove from arrays
                 itineraryData[dayIndex].activities.splice(actIndex, 1);
                 completedActivities = completedActivities.filter(id => id !== deletedId);
                 savedActivities = savedActivities.filter(id => id !== deletedId);
@@ -987,12 +850,12 @@
                 recalculateAllTotals();
                 saveData();
                 renderEditView();
-                backgroundSync(); // Safely updates progress bar and live views
+                backgroundSync();
             }
             closeDeleteModal();
         }
 
-        // --- STREAMING_CHUNK:Backup & Drive Sync Logic ---
+        // --- STREAMING_CHUNK:Backup & GitHub Auto-Sync ---
         function exportData() {
             const backup = { itinerary: itineraryData, completed: completedActivities, saved: savedActivities, notes: roughNotes };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
@@ -1015,59 +878,136 @@
                         savedActivities = imported.saved || [];
                         roughNotes = imported.notes || "";
                         
-                        saveData(); // triggers local storage save
-                        loadData(); // reloads full UI
-                        alert("Backup Restored Successfully!");
+                        saveData(true);
+                        loadData();
+                        alert("Backup imported successfully!");
+                    } else {
+                        alert("Invalid backup file: Missing itinerary data.");
                     }
                 } catch (err) {
-                    alert("Invalid JSON file.");
+                    alert("Error parsing JSON file. Ensure it is a valid backup.");
                 }
             };
             reader.readAsText(file);
+            event.target.value = ''; // Reset input so you can import the same file again if needed
         }
 
-        async function importFromGitHub() {
+        async function importFromGitHub(isSilent = false) {
             const btn = document.getElementById('github-sync-btn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Syncing...';
+            const indicator = document.getElementById('sync-status');
+            
+            if (!isSilent && btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Pulling...';
+            if (isSilent && indicator) indicator.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sky-500 mr-1.5"></i> Auto-Pulling...';
             
             try {
-                // Direct fetch using GitHub's raw content domain (natively supports CORS!)
-                // Added a cache buster timestamp so you always pull the very latest commit from main branch
                 const fetchUrl = 'https://raw.githubusercontent.com/tomybrotherbro-debug/Aust_trip/main/australia_trip_backup.json?nocache=' + Date.now();
-                
                 const response = await fetch(fetchUrl);
-                if (!response.ok) throw new Error("Failed to fetch from GitHub: " + response.statusText);
+                if (!response.ok) throw new Error("Failed to fetch from GitHub");
                 
                 const data = await response.json();
                 
                 if (data.itinerary) {
                     itineraryData = data.itinerary;
-                    if(data.completed) completedActivities = data.completed;
-                    if(data.saved) savedActivities = data.saved;
-                    if(data.notes !== undefined) roughNotes = data.notes;
+                    completedActivities = data.completed || [];
+                    savedActivities = data.saved || [];
+                    roughNotes = data.notes || "";
                     
-                    saveData();
+                    // Save locally but SKIP auto-pushing so we don't cause an infinite loop
+                    saveData(true); 
+                    
+                    // Directly write notes to storage to bypass the debounce
+                    localStorage.setItem('sydneyNotes', roughNotes);
+                    
                     loadData();
                     
-                    const indicator = document.getElementById('sync-status');
-                    indicator.innerHTML = '<i class="fa-brands fa-github text-slate-800 mr-1.5"></i> GitHub Synced';
-                    setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
-                } else {
-                    throw new Error("Invalid format: 'itinerary' key missing");
+                    if (indicator) {
+                        indicator.innerHTML = '<i class="fa-brands fa-github text-slate-800 mr-1.5"></i> Synced with Cloud';
+                        setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
+                    }
                 }
             } catch (e) {
-                console.error(e);
-                alert("GitHub sync failed. Make sure the repository is public and the file exists.");
+                if (!isSilent) alert("GitHub Pull failed. Make sure repo is public and file exists.");
+                console.error("Auto-pull fetch failed", e);
             } finally {
-                btn.innerHTML = '<i class="fa-brands fa-github mr-1.5 text-sm"></i> Sync GitHub';
+                if (!isSilent && btn) btn.innerHTML = '<i class="fa-brands fa-github mr-1.5 text-sm"></i> Pull';
+            }
+        }
+
+        function saveGitHubToken() {
+            const token = document.getElementById('github-pat-input').value.trim();
+            if (token) {
+                localStorage.setItem('github_pat', token);
+                alert("GitHub Token saved securely! Background Auto-Sync is now enabled.");
+            } else {
+                localStorage.removeItem('github_pat');
+                alert("GitHub Token removed. Auto-Sync disabled.");
+            }
+        }
+
+        async function pushToGitHub(isSilent = false) {
+            const token = localStorage.getItem('github_pat');
+            if (!token) {
+                if(!isSilent) {
+                    alert("Authentication Required:\nPlease enter your GitHub Personal Access Token in the Admin Tools tab to enable pushing data to GitHub.");
+                    switchTab('admin');
+                }
+                return;
+            }
+
+            const indicator = document.getElementById('sync-status');
+            const btn = document.getElementById('github-push-btn');
+            const originalHTML = btn ? btn.innerHTML : '';
+            
+            if(!isSilent && btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Pushing...';
+            indicator.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sky-500 mr-1.5"></i> Pushing to GitHub...';
+            
+            // Hardcoded strictly to your requested repository URL
+            const owner = 'tomybrotherbro-debug';
+            const repo = 'Aust_trip';
+            const path = 'australia_trip_backup.json';
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+            try {
+                let sha = '';
+                const getRes = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (getRes.ok) {
+                    const getJson = await getRes.json();
+                    sha = getJson.sha;
+                }
+
+                const backup = { itinerary: itineraryData, completed: completedActivities, saved: savedActivities, notes: roughNotes };
+                const jsonString = JSON.stringify(backup, null, 2);
+                const base64Content = btoa(unescape(encodeURIComponent(jsonString))); 
+
+                const putRes = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Auto-sync: Updated itinerary via web app`,
+                        content: base64Content,
+                        sha: sha || undefined
+                    })
+                });
+
+                if (!putRes.ok) throw new Error("Failed to push to GitHub.");
+
+                indicator.innerHTML = '<i class="fa-brands fa-github text-emerald-600 mr-1.5"></i> GitHub Synced';
+                setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 4000);
+
+            } catch (e) {
+                console.error(e);
+                indicator.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-rose-500 mr-1.5"></i> Sync Error';
+                if(!isSilent) alert("Push failed! " + e.message + "\nEnsure token has 'repo' permissions.");
+            } finally {
+                if(!isSilent && btn) btn.innerHTML = originalHTML;
             }
         }
 
         // --- STREAMING_CHUNK:Admin Tester Logic ---
-        let tempFetchedData = null;
-
         function convertToRawGitHubUrl(url) {
-            // Automatically convert a standard GitHub file link to a raw download link
             if (url.includes('github.com') && url.includes('/blob/')) {
                 return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
             }
@@ -1081,69 +1021,41 @@
             const proxy = document.getElementById('admin-proxy').value;
             const applyBtn = document.getElementById('apply-test-btn');
             
-            if(!inputVal) {
-                consoleOut.innerText = "> ERROR: Please enter a GitHub link.";
-                return;
-            }
+            if(!inputVal) { consoleOut.innerText = "> ERROR: Please enter a GitHub link."; return; }
 
             const rawUrl = convertToRawGitHubUrl(inputVal);
-            consoleOut.innerText = `> PARSING URL...\n> RAW URL: ${rawUrl}\n> PROXY SELECTED: ${proxy}\n> INITIATING FETCH...`;
+            consoleOut.innerText = `> PARSING URL...\n> RAW URL: ${rawUrl}\n> INITIATING FETCH...`;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Fetching...';
             applyBtn.classList.add('hidden');
             applyBtn.classList.remove('flex');
             tempFetchedData = null;
 
             try {
-                let fetchUrl = '';
-                
-                if (proxy === 'allorigins') {
-                    fetchUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}&disableCache=${Date.now()}`;
-                } else if (proxy === 'corsproxy') {
-                    fetchUrl = `https://corsproxy.io/?${encodeURIComponent(rawUrl)}`;
-                } else {
-                    // Direct fetch
-                    fetchUrl = `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}nocache=${Date.now()}`; 
-                }
+                let fetchUrl = proxy === 'allorigins' ? `https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}&disableCache=${Date.now()}` : 
+                               proxy === 'corsproxy' ? `https://corsproxy.io/?${encodeURIComponent(rawUrl)}` : 
+                               `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}nocache=${Date.now()}`; 
 
                 consoleOut.innerText += `\n> REQUESTING URL:\n${fetchUrl}\n> WAITING FOR RESPONSE...`;
 
                 const response = await fetch(fetchUrl);
-                
-                let rawDataStr = '';
-                if (proxy === 'allorigins') {
-                    const data = await response.json();
-                    rawDataStr = data.contents;
-                } else {
-                    rawDataStr = await response.text();
-                }
+                let rawDataStr = proxy === 'allorigins' ? (await response.json()).contents : await response.text();
 
                 if (!rawDataStr) throw new Error("Empty contents returned from fetch.");
-
                 consoleOut.innerText += `\n> RESPONSE RECEIVED! Parsing JSON...`;
                 
                 let parsed;
-                try {
-                    parsed = JSON.parse(rawDataStr);
-                } catch (parseError) {
-                    if (rawDataStr.trim().startsWith('<')) {
-                        throw new Error("HTML RETURNED: GitHub returned an HTML webpage instead of raw JSON data. Ensure you are linking to the raw file or a public repository.");
-                    } else {
-                        throw new Error("INVALID JSON FORMAT: The JSON syntax inside the file is broken.\nDetails: " + parseError.message);
-                    }
-                }
+                try { parsed = JSON.parse(rawDataStr); } 
+                catch (parseError) { throw new Error("INVALID JSON FORMAT:\nDetails: " + parseError.message); }
                 
                 if(parsed.itinerary) {
                     tempFetchedData = parsed;
-                    applyBtn.classList.remove('hidden');
-                    applyBtn.classList.add('flex');
+                    applyBtn.classList.remove('hidden'); applyBtn.classList.add('flex');
                     consoleOut.innerHTML = `> <span class="text-emerald-400">SUCCESS! Valid itinerary data found.</span>\n\n> PARSED JSON PAYLOAD:\n` + JSON.stringify(parsed, null, 2);
                 } else {
-                    consoleOut.innerHTML = `> <span class="text-amber-400">WARNING: JSON is valid, but 'itinerary' root key is missing. Ensure this is the correct app file.</span>\n\n` + JSON.stringify(parsed, null, 2);
+                    consoleOut.innerHTML = `> <span class="text-amber-400">WARNING: JSON valid, but 'itinerary' key missing.</span>\n\n` + JSON.stringify(parsed, null, 2);
                 }
-
             } catch (e) {
-                consoleOut.innerHTML += `\n\n> <span class="text-rose-400">CRITICAL ERROR:</span>\n${e.message}\n\n> TROUBLESHOOTING:\n1. Ensure the repository is Public.\n2. Ensure the URL points to a JSON file.`;
-                console.error(e);
+                consoleOut.innerHTML += `\n\n> <span class="text-rose-400">CRITICAL ERROR:</span>\n${e.message}`;
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> Test Connection';
             }
@@ -1153,9 +1065,9 @@
             if(!tempFetchedData || !tempFetchedData.itinerary) return;
             
             itineraryData = tempFetchedData.itinerary;
-            if(tempFetchedData.completed) completedActivities = tempFetchedData.completed;
-            if(tempFetchedData.saved) savedActivities = tempFetchedData.saved;
-            if(tempFetchedData.notes !== undefined) roughNotes = tempFetchedData.notes;
+            completedActivities = tempFetchedData.completed || [];
+            savedActivities = tempFetchedData.saved || [];
+            roughNotes = tempFetchedData.notes || "";
             
             saveData();
             loadData();
@@ -1163,13 +1075,26 @@
             
             const indicator = document.getElementById('sync-status');
             indicator.innerHTML = '<i class="fa-brands fa-github text-slate-800 mr-1.5"></i> Test Data Applied';
-            setTimeout(() => { indicator.innerHTML = '<i class="fa-solid fa-hard-drive text-green-500 mr-1.5"></i> Local Save'; }, 3000);
         }
 
         // --- STREAMING_CHUNK:Boot Sequence ---
         window.onload = () => {
-            loadData(); // Will pull from localStorage or inject defaults
+            loadData();
+            const savedToken = localStorage.getItem('github_pat');
+            if (savedToken && document.getElementById('github-pat-input')) {
+                document.getElementById('github-pat-input').value = savedToken;
+            }
+            
+            // Auto-Pull on Initial Load to ensure latest data
+            importFromGitHub(true);
         };
+        
+        // Auto-Pull whenever the user switches back to this tab / reopens the app on phone
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                importFromGitHub(true);
+            }
+        });
 
     </script>
 </body>
